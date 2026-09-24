@@ -1055,7 +1055,7 @@ function topbar(wide) {
 }
 function userDropdown() {
   var p = S.profile;
-  if (isTrial()) return '<div class="dropdown"><div class="who"><b>Khách dùng thử</b><div class="small muted">Luyện câu hỏi từ đề CPA ' + esc(trialYearsText()) + "</div></div>" +
+  if (isTrial()) return '<div class="dropdown"><div class="who"><b>Khách dùng thử</b><div class="small muted">Ôn luyện câu lẻ và Test nhanh</div></div>' +
     '<button data-act="trialToLogin">' + icon("user") + " Đăng nhập học viên</button>" +
     '<button class="danger" data-act="logout">' + icon("logout") + " Thoát dùng thử</button></div>";
   var admin = p.role === "admin" && Backend.mode === "gas" ? '<button data-act="openAdmin">' + icon("shield") + " Trang quản trị</button>" : "";
@@ -1170,7 +1170,7 @@ function trialYearsText() { var y = TRIAL.years.slice().sort(); return y.length 
 function showLocked() {
   render();
   openModal('<div class="center"><div class="lock-badge">' + icon("lock") + '</div><h3 style="margin:10px 0 6px;">Tính năng dành cho học viên Gonnapass</h3>' +
-    '<p class="muted">Bản dùng thử gồm <b>Ôn luyện ngẫu nhiên câu lẻ</b> và <b>Test nhanh</b> với câu hỏi từ đề CPA ' + esc(trialYearsText()) + '. Đăng ký học viên Gonnapass để mở khoá toàn bộ: đề thi CPA 2010-2025 (120 phút), luyện theo dạng bài và mức độ, học từ mới, vở ghi, thống kê tiến bộ và email nhắc lịch học.</p>' +
+    '<p class="muted">Bản dùng thử gồm <b>Ôn luyện ngẫu nhiên câu lẻ</b> và <b>Test nhanh</b>. Đăng ký học viên Gonnapass để mở khoá toàn bộ: đề thi CPA 2010-2025 (120 phút), luyện theo dạng bài và mức độ, học từ mới, vở ghi, thống kê tiến bộ và email nhắc lịch học.</p>' +
     '<p style="margin-top:8px;">Hotline/Zalo: <b>' + HOTLINE + "</b></p></div>" +
     '<div class="row" style="justify-content:center;margin-top:14px;"><button class="btn secondary" data-act="closeModal">Để sau</button><button class="btn" data-act="trialToLogin">Đăng nhập học viên</button></div>');
 }
@@ -1398,7 +1398,7 @@ VIEWS.home = {
       '<div class="hero-stats"><div class="hero-stat"><div class="n">' + hs.total.toLocaleString("vi-VN") + '</div><div class="l">' + (trial ? "câu mở cho dùng thử" : "câu hỏi trong ngân hàng") + '</div></div>' +
       '<div class="hero-stat"><div class="n">' + hs.done.toLocaleString("vi-VN") + '</div><div class="l">câu bạn đã làm</div></div>' +
       '<div class="hero-stat"><div class="n">' + hs.acc + '</div><div class="l">tỷ lệ trả lời đúng</div></div></div></section>' +
-      draftHtml + (trial ? '<div class="card tight trial-banner"><div><b>Bạn đang dùng thử miễn phí.</b> Được mở: Ôn luyện ngẫu nhiên câu lẻ và Test nhanh, câu hỏi từ đề CPA ' + esc(trialYearsText()) + '. Kết quả chỉ lưu trên trình duyệt này.</div><button class="btn sm" data-act="trialToLogin">Đăng nhập học viên</button></div>' : goalHtml) +
+      draftHtml + (trial ? '<div class="card tight trial-banner"><div><b>Bạn đang dùng thử miễn phí.</b> Được mở: Ôn luyện ngẫu nhiên câu lẻ và Test nhanh. Kết quả chỉ lưu trên trình duyệt này.</div><button class="btn sm" data-act="trialToLogin">Đăng nhập học viên</button></div>' : goalHtml) +
       MENU_GROUPS.map(function (g) {
         return '<div class="sec-title"><h3>' + g[1] + '</h3></div><div class="menu-grid">' + MENU.filter(function (m) { return m.g === g[0]; }).map(menuTile).join("") + "</div>";
       }).join("");
