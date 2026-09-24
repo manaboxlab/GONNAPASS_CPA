@@ -107,9 +107,10 @@ p{margin:0 0 8px;}
 .hero > *{position:relative;}
 .hero .eyebrow{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-2);}
 .hero h2{font-size:26px; color:#fff; margin:6px 0 12px;}
-.hero p{color:var(--hero-muted); max-width:70ch;}
+.hero p{color:var(--hero-muted); max-width:none; text-align:justify; text-wrap:pretty;}
+@media (max-width:560px){ .hero p{text-align:left;} }
 .hero .quote{color:#fff; font-style:italic; border-left:3px solid var(--accent-2); padding-left:12px; margin:12px 0;}
-.hero .contact{font-size:13px; color:var(--hero-muted);}
+.hero .contact{font-size:13px; color:var(--hero-muted); text-align:left;}
 .hero .contact b{color:#fff; font-weight:600;}
 .hero-stats{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:18px;}
 .hero-stat{background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); border-radius:12px; padding:12px 14px;}
