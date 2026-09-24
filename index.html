@@ -365,6 +365,16 @@ body.exam-mode .fab{display:none;}
 .lvbar{display:flex; height:10px; border-radius:6px; overflow:hidden; background:var(--surface-3);}
 .lvbar span{display:block; height:100%;}
 
+.trial-box{margin-top:18px; padding:14px; border:1px dashed var(--line-2); border-radius:var(--radius-sm); background:var(--surface-2);}
+.trial-box .btn{width:auto;}
+.trial-banner{display:flex; gap:12px; align-items:center; justify-content:space-between; background:var(--warn-soft); border-color:transparent; color:var(--ink);}
+@media (max-width:560px){ .trial-banner{flex-direction:column; align-items:flex-start;} }
+.menu-btn.locked{opacity:.62;}
+.menu-btn.locked:hover{opacity:.85;}
+.menu-btn .lock-tag{position:absolute; right:12px; bottom:10px; display:inline-flex; gap:4px; align-items:center; font-size:11px; font-weight:600; color:var(--muted); background:var(--surface-2); border-radius:999px; padding:2px 8px;}
+.lock-badge{width:56px; height:56px; margin:0 auto; border-radius:50%; background:var(--accent-soft); color:var(--accent); display:flex; align-items:center; justify-content:center;}
+.lock-badge svg.i{width:26px; height:26px;}
+
 </style>
 </head>
 <body>
@@ -445,6 +455,7 @@ var ICONS = {
   edit: '<path d="M4 20h4L20 8l-4-4L4 16z"/>',
   trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
+  lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   list: '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>'
 };
@@ -497,6 +508,12 @@ var Backend = {
 // =====================================================================================
 // trạng thái chung
 // =====================================================================================
+// ---- tài khoản dùng thử (mật khẩu chung): chỉ Ôn luyện câu lẻ + Test nhanh, câu hỏi từ một số đề
+var TRIAL = { years: ["2010", "2011", "2012", "2013", "2014", "2015"], defaultPass: "gonnapass" };
+var TRIAL_VIEWS = { login: 1, loading: 1, home: 1, practice: 1, exam: 1, results: 1 };
+var TRIAL_LOCKED = { goExamList: 1, goSections: 1, startRandomMix: 1, goReview: 1, goFlash: 1, goNotebook: 1, goStats: 1, openGoal: 1, openProfile: 1,
+  openAdmin: 1, startYearExam: 1, startCustomExam: 1, toggleMark: 1, addNoteFromItem: 1, reportError: 1, overridePrac: 1, overrideRes: 1, pracRedoWrong: 0 };
+function isTrial() { return !!(S.profile && S.profile.role === "trial"); }
 var S = {
   profile: null,       // {phone, name, email, role}
   view: "loading",
@@ -555,7 +572,8 @@ var Sync = {
     var evs = me.events.splice(0, me.events.length);
     if (Backend.mode === "gas") {
       var jobs = [];
-      if (me.dirty || me.histDirty || force) {
+      if (isTrial()) { me.dirty = false; me.histDirty = false; }   // dùng thử: chỉ lưu trên trình duyệt, chỉ gửi nhật ký sử dụng
+      if (!isTrial() && (me.dirty || me.histDirty || force)) {
         var body = { phone: S.profile.phone, data: S.ud, summary: computeSummary(), study: studyNumbers() };
         if (me.histDirty || force) body.hist = S.hist;
         me.dirty = false; me.histDirty = false;
@@ -565,14 +583,14 @@ var Sync = {
       if (evs.length) jobs.push(Backend.call("logEvents", { phone: S.profile.phone, events: evs }).catch(function () { me.events = evs.concat(me.events); }));
       return Promise.all(jobs);
     }
-    if (Backend.mode === "db" && (me.dirty || force)) {
+    if (Backend.mode === "db" && !isTrial() && (me.dirty || force)) {
       me.dirty = false;
       return Backend.dbSet("userdata/" + S.profile.phone, { data: S.ud, hist: S.hist, summary: computeSummary(), updatedAt: Date.now() });
     }
     return Promise.resolve();
   },
   pull: function () {
-    if (!S.profile) return Promise.resolve();
+    if (!S.profile || isTrial()) return Promise.resolve();
     if (Backend.mode === "gas") {
       return Backend.call("getUserData", { phone: S.profile.phone }).then(function (r) {
         S.ud = mergeUD(S.ud, r.data); S.hist = mergeHist(S.hist, r.hist); saveLocalUD();
@@ -724,7 +742,8 @@ function loadQEdits() {
 }
 
 function hasAnswer(it) { return it.answer != null && String(it.answer).trim() !== ""; }
-function practiceable(it) { return hasAnswer(it); }
+function trialAllowed(it) { return it._exam.kind === "cpa" && TRIAL.years.indexOf(String(it._exam.year)) >= 0; }
+function practiceable(it) { return hasAnswer(it) && (!isTrial() || trialAllowed(it)); }
 function cpaExams() { return EXAMS.filter(function (e) { return e.kind === "cpa"; }); }
 function examYears() {
   var ys = {}; cpaExams().forEach(function (e) { (ys[e.year] = ys[e.year] || []).push(e); });
@@ -1009,6 +1028,7 @@ var SCREEN_NAMES = { login: "Đăng nhập", home: "Trang chủ", examList: "Ch�
   flashquiz: "Luyện tập từ mới", stats: "Đánh giá sự tiến bộ", admin: "Trang quản trị" };
 
 function go(view, params) {
+  if (isTrial() && !TRIAL_VIEWS[view]) { showLocked(); return; }
   if (S.view === "exam" && view !== "exam" && S.exam && !S.exam.submitted) examSaveDraft();
   S.view = view; S.params = params || {}; S.menuOpen = false;
   document.body.classList.toggle("exam-mode", view === "exam");
@@ -1035,6 +1055,9 @@ function topbar(wide) {
 }
 function userDropdown() {
   var p = S.profile;
+  if (isTrial()) return '<div class="dropdown"><div class="who"><b>Khách dùng thử</b><div class="small muted">Luyện câu hỏi từ đề CPA ' + esc(trialYearsText()) + "</div></div>" +
+    '<button data-act="trialToLogin">' + icon("user") + " Đăng nhập học viên</button>" +
+    '<button class="danger" data-act="logout">' + icon("logout") + " Thoát dùng thử</button></div>";
   var admin = p.role === "admin" && Backend.mode === "gas" ? '<button data-act="openAdmin">' + icon("shield") + " Trang quản trị</button>" : "";
   return '<div class="dropdown"><div class="who"><b>' + esc(p.name) + '</b><div class="small muted">SĐT: ' + esc(p.phone) + (p.email ? " · " + esc(p.email) : "") + "</div></div>" +
     '<button data-act="openProfile">' + icon("user") + " Thông tin cá nhân</button>" +
@@ -1048,7 +1071,9 @@ document.addEventListener("click", function (ev) {
   var t = ev.target.closest("[data-act]");
   if (S.menuOpen && !ev.target.closest(".usermenu")) { S.menuOpen = false; render(); if (!t) return; }
   if (!t) return;
-  var fn = ACT[t.getAttribute("data-act")];
+  var an = t.getAttribute("data-act");
+  if (isTrial() && TRIAL_LOCKED[an]) { ev.preventDefault(); S.menuOpen = false; showLocked(); return; }
+  var fn = ACT[an];
   if (!fn) return;
   if (t.classList.contains("modal-bg")) { fn(t, ev); return; }   // không chặn click vào ô nhập trong hộp thoại
   ev.preventDefault(); fn(t, ev);
@@ -1133,12 +1158,25 @@ function markBtn(id) {
   return '<button class="iconbtn' + (on ? " on-mark" : "") + '" data-act="toggleMark" data-id="' + esc(id) + '">' + icon("star", "sm") + (on ? " Đã đánh dấu học lại" : " Đánh dấu học lại") + "</button>";
 }
 function itemActions(it, g, userAns) {
+  if (isTrial()) return "";
   var b = markBtn(it.id) +
     '<button class="iconbtn" data-act="addNoteFromItem" data-id="' + esc(it.id) + '">' + icon("note", "sm") + " Thêm vào vở ghi</button>" +
     '<button class="iconbtn" data-act="reportError" data-id="' + esc(it.id) + '">' + icon("alert", "sm") + " Báo lỗi đáp án</button>";
   return '<div class="row" style="margin-top:10px;">' + b + "</div>";
 }
 
+// ---- khoá tính năng khi dùng thử
+function trialYearsText() { var y = TRIAL.years.slice().sort(); return y.length ? (y.length > 2 && +y[y.length - 1] - +y[0] === y.length - 1 ? y[0] + "-" + y[y.length - 1] : y.join(", ")) : ""; }
+function showLocked() {
+  render();
+  openModal('<div class="center"><div class="lock-badge">' + icon("lock") + '</div><h3 style="margin:10px 0 6px;">Tính năng dành cho học viên Gonnapass</h3>' +
+    '<p class="muted">Bản dùng thử gồm <b>Ôn luyện ngẫu nhiên câu lẻ</b> và <b>Test nhanh</b> với câu hỏi từ đề CPA ' + esc(trialYearsText()) + '. Đăng ký học viên Gonnapass để mở khoá toàn bộ: đề thi CPA 2010-2025 (120 phút), luyện theo dạng bài và mức độ, học từ mới, vở ghi, thống kê tiến bộ và email nhắc lịch học.</p>' +
+    '<p style="margin-top:8px;">Hotline/Zalo: <b>' + HOTLINE + "</b></p></div>" +
+    '<div class="row" style="justify-content:center;margin-top:14px;"><button class="btn secondary" data-act="closeModal">Để sau</button><button class="btn" data-act="trialToLogin">Đăng nhập học viên</button></div>');
+}
+ACT.trialToLogin = function () {
+  closeModal(); S.profile = null; lsSet("gnp:profile", null); S.menuOpen = false; go("login");
+};
 // ---- thông tin cá nhân
 ACT.openProfile = function () {
   S.menuOpen = false; render();
@@ -1240,11 +1278,16 @@ VIEWS.login = {
       '<label class="field" style="margin-top:12px;">Số điện thoại<input type="tel" id="loginPhone" placeholder="VD: 0912345678" maxlength="15" ' + (S.loginBusy ? "disabled" : "") + "></label>" +
       (S.loginErr ? '<div class="notice" style="margin-top:10px;color:var(--danger);background:var(--danger-soft);">' + esc(S.loginErr) + "</div>" : "") +
       '<div style="margin-top:14px;"><button class="btn" data-act="doLogin" ' + (S.loginBusy ? "disabled" : "") + ">" + (S.loginBusy ? "Đang kiểm tra…" : "Đăng nhập") + "</button></div>" +
+      '<div class="trial-box"><div class="row between"><b>Chưa là học viên? Dùng thử miễn phí</b><span class="pill accent">Miễn phí</span></div>' +
+      '<p class="small muted" style="margin:4px 0 8px;">Nhập mật khẩu dùng thử do Gonnapass cung cấp để luyện thử Ôn luyện câu lẻ và Test nhanh.</p>' +
+      '<div class="row" style="flex-wrap:nowrap;"><input type="password" id="trialPass" placeholder="Mật khẩu dùng thử" autocomplete="off"><button class="btn secondary" data-act="doTrial" style="width:auto;flex:none;">Vào dùng thử</button></div>' +
+      (S.trialErr ? '<p class="small" style="color:var(--danger);margin-top:6px;">' + esc(S.trialErr) + "</p>" : "") + "</div>" +
       '<p class="small muted" style="margin-top:16px;">Cần hỗ trợ? Hotline/Zalo <b>' + HOTLINE + "</b></p></div></div>";
   },
   after: function () {
     var i = el("loginPhone"); if (!i) return; i.focus();
     i.addEventListener("keydown", function (e) { if (e.key === "Enter") ACT.doLogin(); });
+    var tp = el("trialPass"); if (tp) tp.addEventListener("keydown", function (e) { if (e.key === "Enter") ACT.doTrial(); });
   }
 };
 ACT.doLogin = function () {
@@ -1261,6 +1304,27 @@ ACT.doLogin = function () {
     render();
   });
 };
+ACT.doTrial = function () {
+  var pw = modalVal("trialPass").trim(); if (!pw) return;
+  S.trialErr = null;
+  var ok = function (years) {
+    if (years && years.length) TRIAL.years = years.map(String);
+    startSession({ phone: "khach", name: "Khách dùng thử", email: "", role: "trial", trialYears: TRIAL.years, at: Date.now() }, true);
+    logEvent("dung_thu", "dang_nhap");
+  };
+  if (Backend.mode === "gas") {
+    Backend.call("trialLogin", { password: pw }).then(function (r) { ok(r.years); }).catch(function (e) {
+      var code = e && e.code;
+      // máy chủ chưa cập nhật tính năng dùng thử -> dùng mật khẩu mặc định
+      if (code === "unknown_action" && pw.toLowerCase() === TRIAL.defaultPass) return ok(null);
+      S.trialErr = code === "trial_off" ? "Chương trình dùng thử hiện đang tạm dừng. Vui lòng liên hệ Hotline/Zalo " + HOTLINE + "."
+        : code === "wrong_password" || code === "unknown_action" ? "Mật khẩu dùng thử chưa đúng."
+        : "Không kết nối được máy chủ. Vui lòng kiểm tra mạng và thử lại.";
+      render();
+    });
+  } else if (pw.toLowerCase() === TRIAL.defaultPass) ok(null);
+  else { S.trialErr = "Mật khẩu dùng thử chưa đúng."; render(); }
+};
 function authenticate(phone) {
   if (Backend.mode === "gas") return Backend.call("login", { phone: phone }).then(function (r) { return r.profile; }).catch(function (e) { if (e.code === "not_allowed") return null; throw e; });
   if (Backend.mode === "db") return Backend.dbGet("allowlist/" + phone).then(function (r) { return r && r.name ? { phone: phone, name: r.name, email: r.email || "", role: r.role || "hocvien" } : null; });
@@ -1273,6 +1337,15 @@ function startSession(p, fresh) {
   loadLocalUD();
   go("home");
   Sync.pull().then(function () { if (S.view === "home") render(); });
+  if (isTrial()) {
+    if (p.trialYears) TRIAL.years = p.trialYears;
+    if (!fresh && Backend.mode === "gas") Backend.call("getTrialConfig", {}).then(function (r) {
+      if (!r.enabled) { toast("Chương trình dùng thử đã kết thúc"); S.profile = null; lsSet("gnp:profile", null); go("login"); return; }
+      TRIAL.years = (r.years || TRIAL.years).map(String); S.profile.trialYears = TRIAL.years; lsSet("gnp:profile", S.profile); if (S.view === "home") render();
+    }).catch(function () {});
+    if (!fresh) logEvent("dung_thu", "truy_cap");
+    return;
+  }
   if (!fresh && Backend.mode === "gas") Backend.call("visit", { phone: p.phone }).then(function (r) {
     if (r.profile) { S.profile = Object.assign(S.profile, r.profile); lsSet("gnp:profile", S.profile); if (S.view === "home") render(); }
   }).catch(function (e) { if (e.code === "not_allowed") { toast("Tài khoản đã bị khoá hoặc chưa được cấp quyền"); S.profile = null; lsSet("gnp:profile", null); go("login"); } });
@@ -1292,8 +1365,10 @@ var MENU = [
   { g: "hoc", tone: "violet", act: "goStats", ic: "chart", t: "Đánh giá sự tiến bộ của bạn thông qua kết quả các lần luyện tập trước", d: "Tổng hợp kết quả test theo từng dạng bài để bạn có kế hoạch học tập phù hợp." }
 ];
 var MENU_GROUPS = [["thi", "Làm đề thi"], ["luyen", "Luyện tập"], ["hoc", "Học từ vựng & theo dõi tiến bộ"]];
+var TRIAL_OPEN = { startSingleMix: 1, startQuick: 1 };
 function menuTile(m) {
-  return '<button class="menu-btn tone-' + m.tone + '" data-act="' + m.act + '"><span class="ic">' + icon(m.ic) + '</span><span><span class="t">' + esc(m.t) + '</span><span class="d">' + esc(m.d) + '</span></span><span class="go">' + icon("next", "sm") + "</span></button>";
+  var locked = isTrial() && !TRIAL_OPEN[m.act];
+  return '<button class="menu-btn tone-' + m.tone + (locked ? " locked" : "") + '" data-act="' + m.act + '">' + (locked ? '<span class="lock-tag">' + icon("lock", "sm") + " Học viên</span>" : "") + '<span class="ic">' + icon(m.ic) + '</span><span><span class="t">' + esc(m.t) + '</span><span class="d">' + esc(m.d) + '</span></span><span class="go">' + icon("next", "sm") + "</span></button>";
 }
 function homeStats() {
   var pool = ALL.filter(practiceable), done = 0, att = 0, cor = 0;
@@ -1302,7 +1377,7 @@ function homeStats() {
 }
 VIEWS.home = {
   render: function () {
-    var n = ALL.filter(practiceable).length;
+    var n = ALL.filter(hasAnswer).length, trial = isTrial();
     var gp = goalProgress(), goalHtml;
     if (gp) {
       var behind = gp.done < gp.goal.minutes && new Date().getHours() >= (gp.goal.hour || 20) && gp.goal.type === "ngay";
@@ -1320,10 +1395,10 @@ VIEWS.home = {
       "<p>Đội ngũ Gonnapass hi vọng rằng website luyện tập này không chỉ giúp ích cho bạn trong việc luyện thi ôn thi chứng chỉ CPA mà còn cung cấp cho bạn một vốn từ vựng/ kiến thức vững chắc để áp dụng trong công việc hàng ngày. Để Tiếng Anh không còn là rào cản trong sự nghiệp của bạn.</p>" +
       '<p class="quote">"Trên con đường thành công không có dấu chân của kẻ lười biếng" (Lỗ Tấn).</p>' +
       '<p class="contact">Nếu có bất kỳ thắc mắc hay khó khăn nào trong quá trình luyện đề trên hệ thống, bạn hãy vui lòng liên hệ với chúng tôi theo Hotline/Zalo <b>' + HOTLINE + "</b>.</p>" +
-      '<div class="hero-stats"><div class="hero-stat"><div class="n">' + hs.total.toLocaleString("vi-VN") + '</div><div class="l">câu hỏi trong ngân hàng</div></div>' +
+      '<div class="hero-stats"><div class="hero-stat"><div class="n">' + hs.total.toLocaleString("vi-VN") + '</div><div class="l">' + (trial ? "câu mở cho dùng thử" : "câu hỏi trong ngân hàng") + '</div></div>' +
       '<div class="hero-stat"><div class="n">' + hs.done.toLocaleString("vi-VN") + '</div><div class="l">câu bạn đã làm</div></div>' +
       '<div class="hero-stat"><div class="n">' + hs.acc + '</div><div class="l">tỷ lệ trả lời đúng</div></div></div></section>' +
-      draftHtml + goalHtml +
+      draftHtml + (trial ? '<div class="card tight trial-banner"><div><b>Bạn đang dùng thử miễn phí.</b> Được mở: Ôn luyện ngẫu nhiên câu lẻ và Test nhanh, câu hỏi từ đề CPA ' + esc(trialYearsText()) + '. Kết quả chỉ lưu trên trình duyệt này.</div><button class="btn sm" data-act="trialToLogin">Đăng nhập học viên</button></div>' : goalHtml) +
       MENU_GROUPS.map(function (g) {
         return '<div class="sec-title"><h3>' + g[1] + '</h3></div><div class="menu-grid">' + MENU.filter(function (m) { return m.g === g[0]; }).map(menuTile).join("") + "</div>";
       }).join("");
@@ -1835,7 +1910,7 @@ function reviewQuestionHtml(h, it, nm, isCloze) {
       var alts = candidatesOf(it).slice(1);
       if (alts.length) fb += '<div class="small muted" style="margin-top:4px;">Đáp án khác được chấp nhận: ' + alts.map(esc).join(" | ") + "</div>";
     } else if (it.type === "mcq" && x.status !== "ok") fb += '<div class="model">Đáp án đúng: <b>' + esc(answerText(it)) + "</b>" + (x.ans ? " · Bạn chọn: " + esc(x.ans) : "") + "</div>";
-    if (x.status !== "ok" && x.ans && it.type !== "mcq") {
+    if (!isTrial() && x.status !== "ok" && x.ans && it.type !== "mcq") {
       fb += '<div class="small" style="margin-top:8px;">Nếu chắc chắn đáp án của bạn cũng là một đáp án đúng, bạn có thể đổi câu trả lời của bạn thành đáp án đúng: <button class="btn sm ghost" data-act="overrideRes" data-h="' + esc(h.id) + '" data-id="' + esc(it.id) + '">Đổi thành Đúng</button></div>';
     }
   }
@@ -2061,7 +2136,7 @@ function practiceFeedback(it, g, a) {
     var alts = candidatesOf(it).filter(function (c) { return c !== best; });
     if (alts.length) h += '<div class="small muted" style="margin-top:4px;">Đáp án khác được chấp nhận: ' + alts.map(esc).join(" | ") + "</div>";
   }
-  if (g.status !== "ok" && a.trim() && it.type !== "mcq") h += '<div class="small" style="margin-top:8px;">Nếu chắc chắn đáp án của bạn cũng là một đáp án đúng, bạn có thể đổi câu trả lời của bạn thành đáp án đúng: <button class="btn sm ghost" data-act="overridePrac" data-id="' + esc(it.id) + '">Đổi thành Đúng</button></div>';
+  if (!isTrial() && g.status !== "ok" && a.trim() && it.type !== "mcq") h += '<div class="small" style="margin-top:8px;">Nếu chắc chắn đáp án của bạn cũng là một đáp án đúng, bạn có thể đổi câu trả lời của bạn thành đáp án đúng: <button class="btn sm ghost" data-act="overridePrac" data-id="' + esc(it.id) + '">Đổi thành Đúng</button></div>';
   if (it.explanation) h += '<div class="explain">' + esc(it.explanation) + "</div>";
   return h + sourceNote(it) + itemActions(it);
 }
@@ -2463,6 +2538,7 @@ function admLoad() {
   var a = S.adm; a.loading = true; render();
   var jobs = [adm("adminOverview").then(function (r) { a.ov = r; })];
   ["baoloi", "dexuat", "gopy"].forEach(function (t) { jobs.push(adm("adminList", { type: t }).then(function (r) { a[t] = r.items; })); });
+  jobs.push(adm("adminGetTrial").then(function (r) { a.trial = r.config; }).catch(function () { a.trial = null; }));
   jobs.push(adm("adminListCustomExams").then(function (r) { a.cexams = r.exams || []; CUSTOM_EXAMS = a.cexams.filter(function (e) { return e.active !== false; }); lsSet("gnp:customExams", CUSTOM_EXAMS); }).catch(function () { a.cexams = []; }));
   Promise.all(jobs).then(function () { a.loading = false; if (S.view === "admin") render(); }).catch(function () { a.loading = false; if (S.view === "admin") render(); });
 }
@@ -2472,12 +2548,12 @@ VIEWS.admin = {
   render: function () {
     var a = S.adm || {}, ov = a.ov;
     var pend = ov ? ov.pending : { baoloi: 0, dexuat: 0, gopy: 0 };
-    var tabs = [["tongquan", "Tổng quan"], ["hocvien", "Học viên"], ["cauhoi", "Câu hỏi & đáp án"], ["baoloi", "Báo lỗi đáp án", pend.baoloi], ["dexuat", "Đề xuất đáp án", pend.dexuat], ["gopy", "Góp ý", pend.gopy], ["taode", "Tạo đề theo mức độ"], ["hieuchinh", "Hiệu chỉnh mức độ"]];
+    var tabs = [["tongquan", "Tổng quan"], ["hocvien", "Học viên"], ["cauhoi", "Câu hỏi & đáp án"], ["baoloi", "Báo lỗi đáp án", pend.baoloi], ["dexuat", "Đề xuất đáp án", pend.dexuat], ["gopy", "Góp ý", pend.gopy], ["taode", "Tạo đề theo mức độ"], ["hieuchinh", "Hiệu chỉnh mức độ"], ["dungthu", "Dùng thử"]];
     var head = '<div class="card"><div class="row between"><button class="backlink" data-act="goHome">' + icon("back", "sm") + ' Về trang chủ</button><button class="btn sm secondary" data-act="admReload">Tải lại dữ liệu</button></div>' +
       '<h2 style="margin:10px 0;">Trang quản trị</h2><div class="tabs">' + tabs.map(function (x) { return '<button class="' + (a.tab === x[0] ? "on" : "") + '" data-act="admTab" data-t="' + x[0] + '">' + x[1] + (x[2] ? '<span class="badge">' + x[2] + "</span>" : "") + "</button>"; }).join("") + "</div></div>";
     if (a.loading && !ov) return head + '<div class="card muted">Đang tải dữ liệu…</div>';
     if (!ov) return head + '<div class="card">Không tải được dữ liệu quản trị.</div>';
-    var fn = { tongquan: admOverview, hocvien: admStudents, cauhoi: admQuestions, baoloi: admReports, dexuat: admSuggestions, gopy: admFeedback, taode: admBuilder, hieuchinh: admCalib }[a.tab] || admOverview;
+    var fn = { tongquan: admOverview, hocvien: admStudents, cauhoi: admQuestions, baoloi: admReports, dexuat: admSuggestions, gopy: admFeedback, taode: admBuilder, hieuchinh: admCalib, dungthu: admTrial }[a.tab] || admOverview;
     return head + fn(a);
   },
   after: function () {
@@ -2500,7 +2576,7 @@ function admOverview(a) {
   var fmax = feats.length ? ov.features[feats[0]] : 1;
   var featRows = feats.map(function (k) { return hbar(FEATURE_LABEL[k], pct(ov.features[k], fmax), ov.features[k] + " lượt", "var(--accent)").replace(/>\d+% · /, ">"); }).join("");
   var days = []; for (var i = 29; i >= 0; i--) { var d = new Date(); d.setDate(d.getDate() - i); var k = dayKey(d); days.push({ l: pad2(d.getDate()) + "/" + pad2(d.getMonth() + 1), v: ov.dailyVisits[k] || 0, tip: k + ": " + (ov.dailyVisits[k] || 0) + " lượt" }); }
-  return '<div class="statgrid">' + tile(st.length, "Số học viên") + tile(active7, "Học viên hoạt động 7 ngày") + tile(visits, "Tổng lượt truy cập") + tile(fmtPct(cor, att), "Tỷ lệ đúng trung bình (" + att + " lượt)") + "</div>" +
+  return '<div class="statgrid">' + tile(st.length, "Số học viên") + tile(active7, "Học viên hoạt động 7 ngày") + tile(visits, "Tổng lượt truy cập") + tile(fmtPct(cor, att), "Tỷ lệ đúng trung bình (" + att + " lượt)") + tile(ov.trial ? ov.trial.total : 0, "Lượt vào dùng thử") + "</div>" +
     '<div class="grid cols-2"><div class="card"><h3 style="margin-bottom:10px;">Phần học viên đang yếu nhất (từ yếu đến mạnh)</h3>' + (weak || '<p class="muted small">Chưa có dữ liệu.</p>') + "</div>" +
     '<div class="card"><h3 style="margin-bottom:10px;">Chức năng được sử dụng nhiều nhất</h3>' + (featRows || '<p class="muted small">Chưa có dữ liệu.</p>') + "</div></div>" +
     '<div class="card"><h3>Lượt truy cập 30 ngày gần nhất</h3>' + svgBars(days) + "</div>" +
@@ -2513,7 +2589,7 @@ function admStudents(a) {
     return '<tr class="click" data-act="admStudent" data-p="' + esc(s.phone) + '"><td><b>' + esc(s.name) + "</b>" + (s.role === "admin" ? ' <span class="pill accent">admin</span>' : "") + (s.status === "khoa" ? ' <span class="pill danger">khoá</span>' : "") + '<div class="small muted">' + esc(s.phone) + (s.email ? " · " + esc(s.email) : "") + '</div></td><td class="num">' + s.visits + '</td><td class="small">' + esc(s.lastVisit || "-") +
       '</td><td class="num">' + (m.attempts || 0) + '</td><td class="num">' + (m.attempts ? m.rate + "%" : "-") + '</td><td class="num">' + (m.covered || 0) + '</td><td class="num">' + (m.minutes || 0) + '</td><td class="num">' + (m.exams || 0) + '</td><td class="num">' + (m.exams ? m.avgScore : "-") + "</td></tr>";
   }).join("");
-  return '<div class="card"><div class="row between"><h3>Danh sách học viên (' + ov.students.length + ')</h3><button class="btn sm" data-act="admAddStudent">' + icon("plus", "sm") + " Thêm học viên</button></div>" +
+  return '<div class="card"><div class="row between"><h3>Danh sách học viên (' + ov.students.length + ')</h3><div class="row"><button class="btn sm secondary" data-act="admImportStudents">Nhập danh sách</button><button class="btn sm" data-act="admAddStudent">' + icon("plus", "sm") + " Thêm học viên</button></div></div>" +
     '<p class="small muted" style="margin:6px 0 10px;">Bấm vào một dòng để xem chi tiết tiến độ. Có thể thêm học viên ở đây hoặc thêm trực tiếp vào trang tính HocVien trong Google Sheet.</p>' +
     '<div class="tablewrap"><table><thead><tr><th>Học viên</th><th class="num">Lượt truy cập</th><th>Truy cập gần nhất</th><th class="num">Lượt làm câu</th><th class="num">% đúng</th><th class="num">Câu đã làm</th><th class="num">Phút học</th><th class="num">Bài thi</th><th class="num">Điểm TB</th></tr></thead><tbody>' + rows + "</tbody></table></div></div>";
 }
@@ -2523,6 +2599,41 @@ ACT.admAddStudent = function (t) {
     '<label class="field" style="margin-top:8px;">Họ tên<input type="text" id="asName" value="' + esc(s ? s.name : "") + '"></label><label class="field" style="margin-top:8px;">Email<input type="email" id="asEmail" value="' + esc(s ? s.email : "") + '"></label>' +
     '<label class="field" style="margin-top:8px;">Trạng thái<select id="asStatus"><option value="hoat_dong">Hoạt động</option><option value="khoa"' + (s && s.status === "khoa" ? " selected" : "") + ">Khoá (không cho đăng nhập)</option></select></label>" +
     '<div class="row end" style="margin-top:12px;"><button class="btn secondary" data-act="closeModal">Huỷ</button><button class="btn" data-act="admSaveStudent" data-p="' + esc(s ? s.phone : "") + '">Lưu</button></div>');
+};
+// ---- nhập nhiều học viên một lần (dán từ Excel: SĐT | Họ tên | Email)
+function parseStudentLines(txt) {
+  var out = [], bad = [];
+  String(txt || "").split(/\r?\n/).forEach(function (ln, i) {
+    if (!ln.trim()) return;
+    var c = ln.indexOf("\t") >= 0 ? ln.split("\t") : ln.split(/[,;]/);
+    var phone = normalizePhone(c[0] || ""), name = (c[1] || "").trim(), email = (c[2] || "").trim();
+    if (/^(sdt|số điện thoại|so dien thoai|phone)/i.test((c[0] || "").trim())) return;   // bỏ dòng tiêu đề
+    if (phone.length < 10 || !name) bad.push(i + 1); else out.push({ phone: phone, name: name, email: email });
+  });
+  var seen = {}; out = out.filter(function (x) { if (seen[x.phone]) return false; seen[x.phone] = 1; return true; });
+  return { rows: out, bad: bad };
+}
+ACT.admImportStudents = function () {
+  openModal('<h3>Nhập danh sách học viên</h3><p class="small muted">Dán danh sách từ Excel (mỗi dòng một học viên, 3 cột: <b>Số điện thoại</b>, <b>Họ tên</b>, <b>Email</b> - email có thể để trống). Học viên đã có sẽ được cập nhật họ tên/email, trạng thái giữ nguyên.</p>' +
+    '<textarea id="impText" rows="10" placeholder="0912345678\tNguyễn Văn A\ta@example.com"></textarea><div id="impInfo" class="small muted" style="margin-top:6px;"></div>' +
+    '<div class="row end" style="margin-top:12px;"><button class="btn secondary" data-act="closeModal">Huỷ</button><button class="btn" data-act="admDoImport">Nhập danh sách</button></div>', { wide: true });
+  setTimeout(function () { var t = el("impText"); if (t) t.addEventListener("input", function () { var r = parseStudentLines(t.value); el("impInfo").textContent = r.rows.length + " học viên hợp lệ" + (r.bad.length ? " · dòng lỗi (thiếu SĐT 10 số hoặc họ tên): " + r.bad.join(", ") : ""); }); }, 50);
+};
+ACT.admDoImport = function () {
+  var r = parseStudentLines(modalVal("impText"));
+  if (!r.rows.length) return toast("Chưa có dòng hợp lệ");
+  var known = {}; ((S.adm.ov && S.adm.ov.students) || []).forEach(function (s) { known[s.phone] = s; });
+  var done = 0, fail = [], chain = Promise.resolve();
+  el("impInfo").textContent = "Đang nhập 0/" + r.rows.length + "…";
+  r.rows.forEach(function (x) {
+    chain = chain.then(function () {
+      var st = known[x.phone] && known[x.phone].status === "khoa" ? "khoa" : "hoat_dong";
+      return adm("adminUpsertStudent", { target: x.phone, name: x.name, email: x.email || (known[x.phone] ? known[x.phone].email : ""), status: st })
+        .then(function () { done++; }).catch(function () { fail.push(x.phone); })
+        .then(function () { var i = el("impInfo"); if (i) i.textContent = "Đang nhập " + (done + fail.length) + "/" + r.rows.length + "…"; });
+    });
+  });
+  chain.then(function () { closeModal(); toast("Đã nhập " + done + " học viên" + (fail.length ? "; lỗi: " + fail.join(", ") : "")); admLoad(); });
 };
 ACT.admSaveStudent = function (t) {
   var phone = normalizePhone(t.getAttribute("data-p") || modalVal("asPhone")), name = modalVal("asName").trim();
@@ -2801,6 +2912,36 @@ ACT.admCalibApplyAll = function () {
     chain.then(function () { toast("Đã áp dụng cho " + rows.length + " câu"); render(); }).catch(function () { toast("Có lỗi khi lưu, vui lòng thử lại"); render(); });
   });
 };
+
+// =====================================================================================
+// tài khoản dùng thử (mật khẩu chung)
+// =====================================================================================
+function admTrial(a) {
+  var c = a.trial;
+  if (!c) return '<div class="card muted">Không tải được cấu hình dùng thử.</div>';
+  var years = examYears().map(function (y) { return y.year; }).sort();
+  var chk = years.map(function (y) { return '<label class="chip' + (c.years.indexOf(y) >= 0 ? " on" : "") + '" style="cursor:pointer;"><input type="checkbox" class="trYear" value="' + y + '"' + (c.years.indexOf(y) >= 0 ? " checked" : "") + ' style="display:none;"> ' + y + "</label>"; }).join("");
+  var tv = (a.ov && a.ov.trial) || { total: 0, daily: {} }, last7 = 0;
+  for (var i = 0; i < 7; i++) { var d = new Date(); d.setDate(d.getDate() - i); last7 += tv.daily[dayKey(d)] || 0; }
+  var pool = ALL.filter(function (it) { return hasAnswer(it) && it._exam.kind === "cpa" && c.years.indexOf(String(it._exam.year)) >= 0; }).length;
+  return '<div class="statgrid">' + tile(tv.total, "Tổng lượt vào dùng thử") + tile(last7, "Lượt dùng thử 7 ngày qua") + tile(pool, "Câu hỏi mở cho dùng thử") + "</div>" +
+    '<div class="card"><h3>Cấu hình dùng thử</h3><p class="small muted" style="margin:6px 0 12px;">Khách dùng chung một mật khẩu, chỉ được Ôn luyện ngẫu nhiên câu lẻ và Test nhanh, với câu hỏi từ các năm được chọn dưới đây. Kết quả của khách chỉ lưu trên trình duyệt của họ; các tính năng khác (đề theo năm, luyện theo dạng bài, học từ mới, vở ghi, thống kê, mục tiêu và nhắc học) hiện khoá kèm lời mời đăng ký.</p>' +
+    '<label class="row small"><input type="checkbox" id="trOn"' + (c.enabled ? " checked" : "") + "> Cho phép dùng thử</label>" +
+    '<label class="field" style="margin-top:10px;max-width:320px;">Mật khẩu dùng thử<input type="text" id="trPass" value="' + esc(c.pass) + '"></label>' +
+    '<div class="field" style="margin-top:10px;">Đề CPA mở cho dùng thử (bấm để chọn/bỏ)<div class="chips" style="margin-top:6px;">' + chk + "</div></div>" +
+    '<div class="row" style="margin-top:14px;"><button class="btn" data-act="admSaveTrial">Lưu cấu hình</button></div></div>';
+}
+ACT.admSaveTrial = function () {
+  var years = Array.prototype.slice.call(document.querySelectorAll(".trYear")).filter(function (x) { return x.checked; }).map(function (x) { return x.value; });
+  var cfg = { enabled: el("trOn").checked, pass: modalVal("trPass").trim(), years: years };
+  if (cfg.pass.length < 4) return toast("Mật khẩu dùng thử cần ít nhất 4 ký tự");
+  if (!years.length) return toast("Chọn ít nhất 1 năm đề cho dùng thử");
+  adm("adminSetTrial", { config: cfg }).then(function () { S.adm.trial = cfg; toast("Đã lưu cấu hình dùng thử"); render(); }).catch(function () { toast("Không lưu được"); });
+};
+document.addEventListener("change", function (ev) {
+  var t = ev.target; if (!t.classList || !t.classList.contains("trYear")) return;
+  t.parentNode.classList.toggle("on", t.checked);
+});
 
 // =====================================================================================
 // khởi động
