@@ -662,6 +662,9 @@ tr.st-row.st-da_xu_ly, tr.st-row.st-da_sua, tr.st-row.st-tu_choi{background:var(
 .btn.busy,button.busy{opacity:.75; cursor:progress;}
 .spin{display:inline-block; width:13px; height:13px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:spin .7s linear infinite; vertical-align:-2px;}
 @keyframes spin{to{transform:rotate(360deg)}}
+/* chân trang cùng tông xanh navy thương hiệu với khung giới thiệu phía trên */
+.site-footer{background:linear-gradient(150deg,var(--hero-1),var(--hero-2));}
+.site-footer .sf-copy{border-top-color:rgba(255,255,255,.12);}
 
 </style>
 </head>
@@ -1727,7 +1730,7 @@ var AUTH_ERR = {
   exists: "Số điện thoại này đã có tài khoản. Vui lòng đăng nhập (hoặc dùng \"Quên mật khẩu?\").",
   bad_phone: "Số điện thoại cần đủ 10 chữ số.", bad_email: "Email chưa đúng định dạng.", bad_name: "Vui lòng nhập họ và tên.",
   pass_short: "Mật khẩu cần ít nhất 6 ký tự.", email_mismatch: "Email chưa khớp với email đã đăng ký với Gonnapass. Vui lòng liên hệ Hotline/Zalo " + HOTLINE + " nếu cần hỗ trợ.",
-  no_email: "Tài khoản của bạn chưa có email nên chưa gửi được mật khẩu tạm. Yêu cầu cấp lại mật khẩu đã được chuyển tới Gonnapass, bạn vui lòng liên hệ Hotline/Zalo " + HOTLINE + " để nhận mật khẩu mới.",
+  no_email: "Tài khoản của bạn chưa có email nên chưa gửi được mật khẩu tạm. Yêu cầu của bạn đã được chuyển tới Gonnapass, bạn vui lòng liên hệ Hotline/Zalo " + HOTLINE + " để bổ sung email, sau đó bấm lại \"Quên mật khẩu?\" để nhận mật khẩu mới.",
   mail_failed: "Chưa gửi được email. Vui lòng thử lại sau hoặc liên hệ Hotline/Zalo " + HOTLINE + ".",
   register_off: "Hiện chưa mở đăng ký tài khoản mới. Vui lòng liên hệ Hotline/Zalo " + HOTLINE + "."
 };
@@ -1822,7 +1825,7 @@ function footLinks(list) { return "<ul>" + list.map(function (x) { return '<li><
 function siteFooter() {
   var logo = LOGO_SRC ? '<img src="' + esc(LOGO_SRC) + '" alt="">' : "";
   return '<footer class="site-footer"><div class="sf-bar"></div><div class="sf-in">' +
-    '<div class="sf-col sf-brand"><div class="sf-logo">' + logo + '<div><div class="sf-name">GONNA PASS</div><div class="sf-tag">Beyond yourself</div></div></div>' +
+    '<div class="sf-col sf-brand"><div class="sf-logo">' + logo + '<div><div class="sf-name">GONNAPASS</div><div class="sf-tag">Beyond yourself</div></div></div>' +
       '<div class="sf-org"><b>CÔNG TY TNHH GONNAPASS</b></div>' +
       '<p>Địa chỉ: Phòng 701, Tầng 7, Tòa nhà 3D Center, số 3 Duy Tân, Phường Dịch Vọng Hậu, Quận Cầu Giấy, Thành phố Hà Nội, Việt Nam<br>Hotline/Zalo: ' + HOTLINE + "<br>MST: 0108437638<br>GPĐKKD: 0108437638 / 19-09-2018</p></div>" +
     '<div class="sf-col"><h4>Danh sách chứng chỉ</h4>' + footLinks(GNP_LINKS.certs) + "</div>" +
@@ -3837,26 +3840,6 @@ function admStudents(a) {
     '<p class="small muted" style="margin:0 0 10px;">Khách tự đăng ký là tài khoản <b>Dùng thử</b>. Khi khách mua sách, bấm <b>Kích hoạt</b>: hệ thống mở toàn bộ tính năng và tự gửi email thông báo. Bấm vào một dòng để xem chi tiết tiến độ.</p>' +
     '<div class="tablewrap"><table><thead><tr><th>Tài khoản</th><th>Trạng thái</th><th>Ngày tạo</th><th class="num">Lượt truy cập</th><th>Truy cập gần nhất</th><th class="num">Lượt làm câu</th><th class="num">% đúng</th><th class="num">Phút học</th><th class="num">Điểm TB</th></tr></thead><tbody>' + rows + "</tbody></table></div></div>";
 }
-// ---- đặt lại mật khẩu cho học viên (khi học viên quên mật khẩu)
-ACT.admResetPw = function (t) {
-  var p = t.getAttribute("data-p"), s = S.adm.ov.students.filter(function (x) { return x.phone === p; })[0] || { phone: p, name: p, email: "" };
-  openModal("<h3>Đặt lại mật khẩu</h3><p>Tài khoản <b>" + esc(s.name) + "</b> (" + esc(p) + ")</p>" +
-    '<p class="small muted">Hệ thống tạo mật khẩu tạm mới, đăng xuất học viên khỏi mọi thiết bị và gửi mật khẩu qua email. Học viên đăng nhập bằng mật khẩu tạm rồi tự đổi mật khẩu.</p>' +
-    '<label class="field" style="margin-top:8px;">Email nhận mật khẩu (có thể sửa nếu học viên đổi email)<input type="email" id="rpEmail" value="' + esc(s.email || "") + '" placeholder="Để trống nếu học viên không có email"></label>' +
-    '<p class="small muted" style="margin-top:6px;">Không có email: mật khẩu tạm sẽ hiện ở đây để bạn gửi cho học viên qua Zalo/điện thoại.</p>' +
-    '<div class="row end" style="margin-top:12px;"><button class="btn secondary" data-act="closeModal">Huỷ</button><button class="btn" data-act="admResetPwOk" data-p="' + esc(p) + '">Đặt lại và gửi</button></div>');
-};
-ACT.admResetPwOk = function (t) {
-  var p = t.getAttribute("data-p"), email = modalVal("rpEmail").trim();
-  if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return toast("Email chưa đúng định dạng");
-  busy(t, "Đang đặt lại…");
-  adm("adminResetPassword", { target: p, email: email }).then(function (r) {
-    openModal("<h3>Đã đặt lại mật khẩu</h3>" + (r.emailed ? '<p>Đã gửi mật khẩu tạm tới email <b>' + esc(r.email) + "</b>. Học viên kiểm tra hộp thư (cả mục Spam) rồi đăng nhập.</p>"
-      : '<p>Tài khoản chưa có email nên hệ thống chưa gửi thư. Mật khẩu tạm của <b>' + esc(p) + '</b> là:</p><div class="pw-box">' + esc(r.password) + '</div><p class="small muted">Vui lòng gửi mật khẩu này cho học viên qua Zalo/điện thoại và nhắc học viên đổi mật khẩu sau khi đăng nhập.</p>') +
-      '<div class="row end" style="margin-top:12px;"><button class="btn" data-act="closeModal">Đóng</button></div>', { noFocus: true });
-    admSync();
-  }).catch(function (e) { unbusy(t); toast(e.code === "bad_email" ? "Email chưa đúng định dạng" : "Không đặt lại được mật khẩu, vui lòng thử lại"); });
-};
 ACT.admActivate = function (t) {
   var p = t.getAttribute("data-p"), s = S.adm.ov.students.filter(function (x) { return x.phone === p; })[0];
   confirmBox("Kích hoạt đầy đủ tính năng cho <b>" + esc(s ? s.name : p) + "</b> (" + esc(p) + ")? Hệ thống sẽ gửi email thông báo" + (s && s.email ? " tới " + esc(s.email) : "") + ".", "Kích hoạt", function () {
@@ -3954,7 +3937,7 @@ ACT.admStudent = function (t) {
       (exPts.length ? '<h4 style="margin:10px 0 4px;">Điểm các bài thi gần đây (thang 100)</h4>' + svgLine(exPts) : "") +
       '<h4 style="margin:10px 0 8px;">Kết quả theo dạng bài</h4>' + (bars || '<p class="muted small">Chưa có dữ liệu.</p>') +
       '<h4 style="margin:12px 0 8px;">Lịch sử làm bài</h4>' + (sess ? '<div class="tablewrap"><table><thead><tr><th>Thời gian</th><th>Loại</th><th>Nội dung</th><th>Kết quả</th></tr></thead><tbody>' + sess + "</tbody></table></div>" : '<p class="muted small">Chưa có.</p>') +
-      '<div class="row end" style="margin-top:12px;"><button class="btn secondary" data-act="admResetPw" data-p="' + esc(s.phone) + '" data-tip="Tạo mật khẩu tạm mới, đăng xuất học viên khỏi mọi thiết bị và gửi mật khẩu qua email">' + icon("lock", "sm") + ' Đặt lại mật khẩu</button><button class="btn secondary" data-act="admAddStudent" data-p="' + esc(s.phone) + '">Sửa thông tin / khoá</button><button class="btn" data-act="closeModal">Đóng</button></div>';
+      '<div class="row end" style="margin-top:12px;"><button class="btn secondary" data-act="admAddStudent" data-p="' + esc(s.phone) + '">Sửa thông tin / khoá</button><button class="btn" data-act="closeModal">Đóng</button></div>';
   }).catch(function () { closeModal(); toast("Không tải được dữ liệu học viên"); });
 };
 // ---- sửa câu hỏi
