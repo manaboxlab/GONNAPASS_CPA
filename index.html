@@ -656,6 +656,12 @@ tr.st-row.st-da_xu_ly, tr.st-row.st-da_sua, tr.st-row.st-tu_choi{background:var(
 /* tiêu đề thẻ + điều khiển bên phải: căn đáy cho thẳng hàng */
 .card > .row.between:has(> label.field){align-items:flex-end;}
 .card > .row.between > h3{margin:0;}
+.eyebrow-sm{margin-top:10px; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-2);}
+.nowrap{white-space:nowrap;}
+.pw-box{font-family:ui-monospace,Consolas,monospace; font-size:24px; font-weight:700; letter-spacing:3px; text-align:center; background:var(--accent-soft); color:var(--accent); border-radius:10px; padding:12px; margin:8px 0;}
+.btn.busy,button.busy{opacity:.75; cursor:progress;}
+.spin{display:inline-block; width:13px; height:13px; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:spin .7s linear infinite; vertical-align:-2px;}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 </style>
 </head>
@@ -1355,7 +1361,7 @@ var VIEWS = {};      // name -> {render(), after()}
 var ACT = {};        // data-act handlers
 var SCREEN_NAMES = { login: "Đăng nhập", home: "Trang chủ", examList: "Chọn đề thi theo năm", exam: "Làm bài thi", results: "Kết quả bài làm",
   sections: "Luyện theo dạng bài", practice: "Luyện tập", review: "Luyện lại câu sai/đánh dấu", notebook: "Vở ghi của tôi", flash: "Học từ mới",
-  flashquiz: "Luyện tập từ mới", stats: "Đánh giá sự tiến bộ", admin: "Trang quản trị", guide: "Cấu trúc đề thi và dạng bài các năm", tips: "Bí kíp ôn thi CPA", notices: "Thông báo" };
+  flashquiz: "Luyện tập từ mới", stats: "Đánh giá sự tiến bộ", admin: "Trang quản trị", guide: "Tổng hợp dạng bài và kinh nghiệm ôn thi môn Tiếng Anh", tips: "Kinh nghiệm ôn thi CPA các môn khác", notices: "Thông báo" };
 
 // lịch sử màn hình để nút "Quay lại" trở về màn hình ngay trước đó (không tính màn hình làm bài/luyện tập)
 var NO_BACK = { loading: 1, login: 1, exam: 1, practice: 1, flashquiz: 1 };
@@ -1461,15 +1467,19 @@ ACT.openFeedback = function (t) {
     '<textarea id="fbText" rows="5" placeholder="Bạn muốn góp ý điều gì? Nếu gặp lỗi hiển thị, hãy mô tả và đính kèm ảnh chụp màn hình."></textarea>' + attachHtml() +
     '<div class="row end" style="margin-top:12px;"><button class="btn secondary" data-act="closeModal">Huỷ</button><button class="btn" data-act="sendFeedback">Gửi góp ý</button></div>');
 };
-ACT.sendFeedback = function () {
+ACT.sendFeedback = function (t) {
   var text = modalVal("fbText").trim(); if (!text) return toast("Bạn chưa nhập nội dung góp ý");
   var payload = { phone: S.profile.phone, screen: SCREEN_NAMES[S.view] || S.view, text: text, images: S.attach.slice() };
-  sendToAdmin("submitFeedback", "gopy", payload, "Cảm ơn bạn đã góp ý!");
+  sendToAdmin("submitFeedback", "gopy", payload, "Cảm ơn bạn đã góp ý!", t);
 };
+// nút đang chờ máy chủ: khoá nút + hiện "Đang xử lý…"
+function busy(t, label) { if (t && t.tagName === "BUTTON") { t.disabled = true; t.classList.add("busy"); t.setAttribute("data-label", t.innerHTML); t.innerHTML = '<span class="spin"></span> ' + (label || "Đang xử lý…"); } }
+function unbusy(t) { if (t && t.getAttribute && t.getAttribute("data-label") != null) { t.disabled = false; t.classList.remove("busy"); t.innerHTML = t.getAttribute("data-label"); t.removeAttribute("data-label"); } }
 // gửi dữ liệu cho admin (máy chủ Google Sheet; bản claude.ai lưu vào db; bản offline báo không gửi được)
-function sendToAdmin(action, dbColl, payload, okMsg) {
+function sendToAdmin(action, dbColl, payload, okMsg, btn) {
   if (Backend.mode === "gas") {
-    return Backend.call(action, payload).then(function () { closeModal(); toast(okMsg); }).catch(function () { toast("Không gửi được, vui lòng kiểm tra kết nối mạng và thử lại"); });
+    busy(btn, "Đang gửi…");
+    return Backend.call(action, payload).then(function () { closeModal(); toast(okMsg); }).catch(function () { unbusy(btn); toast("Không gửi được, vui lòng kiểm tra kết nối mạng và thử lại"); });
   }
   if (Backend.mode === "db") {
     return Backend.dbSet(dbColl + "/" + uid(), Object.assign({ at: Date.now(), name: S.profile.name }, payload)).then(function () { closeModal(); toast(okMsg); });
@@ -1495,7 +1505,7 @@ ACT.sendReport = function (t) {
   var text = modalVal("reText").trim(), sug = modalVal("reSug").trim();
   if (!text && !sug && !types.length) return toast("Bạn hãy chọn loại lỗi, mô tả lỗi hoặc nhập đáp án đề xuất");
   if (types.length) text = "[" + types.join(", ") + "] " + text;
-  sendToAdmin("reportError", "baoloi", { phone: S.profile.phone, qid: t.getAttribute("data-id"), text: text, suggested: sug, images: S.attach.slice(), screen: SCREEN_NAMES[S.view] || S.view }, "Đã gửi báo lỗi. Gonnapass sẽ kiểm tra và gửi kết quả vào mục Thông báo của bạn.");
+  sendToAdmin("reportError", "baoloi", { phone: S.profile.phone, qid: t.getAttribute("data-id"), text: text, suggested: sug, images: S.attach.slice(), screen: SCREEN_NAMES[S.view] || S.view }, "Đã gửi báo lỗi. Gonnapass sẽ kiểm tra và gửi kết quả vào mục Thông báo của bạn.", t);
   logEvent("bao_loi", t.getAttribute("data-id"));
 };
 function answerText(it) {
@@ -1717,7 +1727,7 @@ var AUTH_ERR = {
   exists: "Số điện thoại này đã có tài khoản. Vui lòng đăng nhập (hoặc dùng \"Quên mật khẩu?\").",
   bad_phone: "Số điện thoại cần đủ 10 chữ số.", bad_email: "Email chưa đúng định dạng.", bad_name: "Vui lòng nhập họ và tên.",
   pass_short: "Mật khẩu cần ít nhất 6 ký tự.", email_mismatch: "Email chưa khớp với email đã đăng ký với Gonnapass. Vui lòng liên hệ Hotline/Zalo " + HOTLINE + " nếu cần hỗ trợ.",
-  no_email: "Tài khoản chưa có email nên không gửi được mật khẩu tạm. Vui lòng liên hệ Hotline/Zalo " + HOTLINE + ".",
+  no_email: "Tài khoản của bạn chưa có email nên chưa gửi được mật khẩu tạm. Yêu cầu cấp lại mật khẩu đã được chuyển tới Gonnapass, bạn vui lòng liên hệ Hotline/Zalo " + HOTLINE + " để nhận mật khẩu mới.",
   mail_failed: "Chưa gửi được email. Vui lòng thử lại sau hoặc liên hệ Hotline/Zalo " + HOTLINE + ".",
   register_off: "Hiện chưa mở đăng ký tài khoản mới. Vui lòng liên hệ Hotline/Zalo " + HOTLINE + "."
 };
@@ -1892,8 +1902,6 @@ var MENU = [
   { g: "thi", tone: "blue", act: "goExamList", ic: "exam", t: "Làm đề thi CPA theo từng năm", d: "Trải nghiệm trọn vẹn một đề thi CPA từng năm với thời gian 120 phút" },
   { g: "thi", tone: "violet", act: "startRandomMix", ic: "shuffle", t: "Luyện tập ngẫu nhiên tổng hợp", d: "Đề thi được tạo ngẫu nhiên theo format đề thi CPA từ ngân hàng câu hỏi được biên soạn, tổng hợp từ giảng viên Gonnapass." },
   { g: "thi", tone: "orange", act: "startQuick", ic: "bolt", t: "Test nhanh", d: "Bạn muốn luyện tập khi không có nhiều thời gian? Test nhanh 20 câu trong 15 phút sẽ giúp bạn." },
-  { g: "luyen", tone: "orange", act: "goGuide", ic: "book", t: "Cấu trúc đề thi và dạng bài các năm", d: "Cấu trúc, thang điểm đề thi CPA môn Tiếng Anh và vị trí từng dạng bài qua các năm 2010 - 2025." },
-  { g: "luyen", tone: "green", act: "goTips", ic: "target", t: "Bí kíp ôn thi CPA", d: "Kinh nghiệm ôn thi môn Tiếng Anh và kinh nghiệm làm bài thi CPA các môn từ những người đã thi đỗ." },
   { g: "luyen", tone: "teal", act: "goSections", ic: "layers", t: "Luyện theo dạng bài", d: "Chọn 1 hoặc nhiều dạng câu hỏi mà bạn đang còn yếu để luyện tập thêm." },
   { g: "luyen", tone: "blue", act: "startSingleMix", ic: "dice", t: "Ôn luyện ngẫu nhiên câu lẻ", d: "Mỗi lượt khoảng 20 câu trộn ngẫu nhiên đủ các dạng bài của đề thi CPA, có đáp án và giải thích ngay sau từng câu. Hệ thống ưu tiên câu bạn chưa làm để bạn lần lượt ôn hết toàn bộ ngân hàng câu hỏi." },
   { g: "luyen", tone: "rose", act: "goReview", ic: "redo", t: REVIEW_TITLE, d: "Ôn tập lại các câu từng trả lời sai và các câu bạn đã đánh dấu còn phân vân." },
@@ -1901,7 +1909,9 @@ var MENU = [
   { g: "hoc", tone: "orange", act: "goNotebook", ic: "note", t: "Vở ghi của tôi", d: "Ghi chú công thức, mẫu câu, ngữ pháp và từ mới; tạo bài luyện từ những gì đã ghi." },
   { g: "hoc", tone: "violet", act: "goStats", ic: "chart", t: "Đánh giá sự tiến bộ", d: "Tổng hợp kết quả test theo từng dạng bài để bạn có kế hoạch học tập phù hợp." }
 ];
-var MENU_GROUPS = [["thi", "Làm đề thi"], ["luyen", "Luyện tập"], ["hoc", "Học từ vựng & theo dõi tiến bộ"]];
+MENU.push({ g: "bikip", tone: "orange", act: "goGuide", ic: "book", t: "Tổng hợp dạng bài và kinh nghiệm ôn thi môn Tiếng Anh", d: "Cấu trúc, thang điểm đề thi, các dạng bài qua từng năm 2010 - 2025 và kinh nghiệm ôn thi môn Tiếng Anh." },
+  { g: "bikip", tone: "green", act: "goTips", ic: "target", t: "Kinh nghiệm ôn thi CPA các môn khác", d: "Kinh nghiệm ôn tập và làm bài thi tự luận các môn Kế toán, Tài chính, Thuế, Luật, Phân tích tài chính từ những người đã thi đỗ." });
+var MENU_GROUPS = [["thi", "Làm đề thi"], ["luyen", "Luyện tập"], ["hoc", "Học từ vựng & theo dõi tiến bộ"], ["bikip", "Bí kíp ôn thi CPA"]];
 var TRIAL_OPEN = { startSingleMix: 1, startQuick: 1, goGuide: 1, goTips: 1, goExamList: 1 };
 function menuTile(m) {
   var locked = isTrial() && !TRIAL_OPEN[m.act];
@@ -2433,6 +2443,7 @@ VIEWS.results = {
     var h = histById(S.params.histId);
     if (!h) return '<div class="card"><p>Không tìm thấy bài làm (lịch sử chi tiết chỉ lưu ' + HIST_MAX + ' bài gần nhất).</p><button class="btn secondary" data-act="goHome">Về trang chủ</button></div>';
     if (h.kind === "practice") return practiceReviewHtml(h);
+    if (h.kind === "vocab") return vocabReviewHtml(h);
     var r = h.results, f = S.params.filter || "all";
     var gRows = scoreBreakdown(r);
     var full = h.def.mode === "year" || h.def.mode === "random" || h.def.mode === "custom";
@@ -3181,11 +3192,10 @@ function gdYearsTab() {
 VIEWS.guide = {
   render: function () {
     var tab = S.guideTab || "cautruc";
-    if (tab !== "dangbai") tab = "cautruc";
-    var tabs = [["cautruc", "Cấu trúc & thang điểm"], ["dangbai", "Dạng bài các năm"]];
-    var body = tab === "dangbai" ? gdYearsTab() : gdStructure();
+    var tabs = [["cautruc", "Cấu trúc & thang điểm"], ["dangbai", "Dạng bài các năm"], ["kinhnghiem", "Kinh nghiệm ôn thi"]];
+    var body = tab === "dangbai" ? gdYearsTab() : tab === "kinhnghiem" ? tipsEnglish() : gdStructure();
     return '<div class="card"><button class="backlink" data-act="goHome">' + icon("back", "sm") + " Về trang chủ</button>" +
-      '<h2 style="margin:10px 0 4px;">Cấu trúc đề thi và dạng bài các năm</h2><p class="muted">Cấu trúc, thang điểm đề thi CPA môn Tiếng Anh và vị trí từng dạng bài qua các năm. Xem thêm kinh nghiệm ôn thi tại mục <a href="#" data-act="goTips">Bí kíp ôn thi CPA</a>.</p>' +
+      '<div class="eyebrow-sm">Bí kíp ôn thi CPA</div><h2 style="margin:4px 0 4px;">Tổng hợp dạng bài và kinh nghiệm ôn thi môn Tiếng Anh</h2><p class="muted">Cấu trúc đề thi CPA môn Tiếng Anh, các dạng bài qua từng năm và kinh nghiệm tự ôn thi từ đội ngũ Gonnapass. Xem thêm <a href="#" data-act="goTips">Kinh nghiệm ôn thi CPA các môn khác</a>.</p>' +
       '<div class="chips gd-tabs" role="tablist" style="margin:14px 0 16px;">' + tabs.map(function (x) {
         return '<button class="chip' + (tab === x[0] ? " on" : "") + '" role="tab" aria-selected="' + (tab === x[0]) + '" data-act="guideTab" data-t="' + x[0] + '">' + x[1] + "</button>";
       }).join("") + "</div>" + body + "</div>";
@@ -3346,11 +3356,11 @@ ACT.openNotice = function (t) {
 ACT.practiceNoticeQ = function (t) { closeModal(); startPractice([ITEMS[t.getAttribute("data-id")]], "Luyện lại câu trong thông báo", "review"); };
 
 // =====================================================================================
-// Bí kíp ôn thi CPA: (1) ôn thi môn Tiếng Anh  (2) kinh nghiệm thi CPA các môn
+// Bí kíp ôn thi CPA (nhóm trên trang chủ): (1) mục Tổng hợp dạng bài và kinh nghiệm ôn thi môn Tiếng Anh (08a_guide, thẻ "Kinh nghiệm ôn thi" dùng tipsEnglish)  (2) mục Kinh nghiệm ôn thi CPA các môn khác (view tips)
 // Nội dung (2) tóm tắt từ tài liệu "Kinh nghiem thi CPA.docx" do Gonnapass cung cấp (chia sẻ của người đã thi và giảng viên ôn thi)
 // =====================================================================================
-ACT.goTips = function () { logEvent("mo_chuc_nang", "bi_kip"); S.tipsTab = S.tipsTab || "tienganh"; go("tips"); };
-ACT.tipsTab = function (t) { S.tipsTab = t.getAttribute("data-t"); render(); };
+ACT.goTips = function () { logEvent("mo_chuc_nang", "bi_kip"); go("tips"); };
+ACT.goGuideTips = function () { S.guideTab = "kinhnghiem"; logEvent("mo_chuc_nang", "kinh_nghiem"); go("guide"); };
 function tipsEnglish() {
   var card = function (ic, title, body, cta) { return '<div class="gd-tip"><div class="gd-tip-ic">' + icon(ic) + '</div><div><h4>' + title + "</h4>" + body + (cta || "") + "</div></div>"; };
   return '<div class="gd-hero"><div class="gd-hero-n">50<span>/100</span></div><div><b>Mục tiêu của bạn: đạt từ 50 điểm.</b><br>Tiếng Anh là môn điều kiện của kỳ thi CPA, chỉ cần đạt là qua và không cộng vào tổng điểm các môn khác. Môn thi chỉ kiểm tra 2 kỹ năng <b>Đọc - Viết</b>, không có Nghe - Nói.</div></div>' +
@@ -3405,13 +3415,9 @@ function tipsCPA() {
 }
 VIEWS.tips = {
   render: function () {
-    var tab = S.tipsTab === "cpa" ? "cpa" : "tienganh";
-    var tabs = [["tienganh", "Ôn thi môn Tiếng Anh"], ["cpa", "Kinh nghiệm thi CPA"]];
     return '<div class="card"><button class="backlink" data-act="goHome">' + icon("back", "sm") + " Về trang chủ</button>" +
-      '<h2 style="margin:10px 0 4px;">Bí kíp ôn thi CPA</h2><p class="muted">Kinh nghiệm ôn thi môn Tiếng Anh và kinh nghiệm làm bài thi CPA các môn, tổng hợp bởi đội ngũ Gonnapass.</p>' +
-      '<div class="chips gd-tabs" role="tablist" style="margin:14px 0 16px;">' + tabs.map(function (x) {
-        return '<button class="chip' + (tab === x[0] ? " on" : "") + '" role="tab" aria-selected="' + (tab === x[0]) + '" data-act="tipsTab" data-t="' + x[0] + '">' + x[1] + "</button>";
-      }).join("") + "</div>" + (tab === "cpa" ? tipsCPA() : tipsEnglish()) + "</div>";
+      '<div class="eyebrow-sm">Bí kíp ôn thi CPA</div><h2 style="margin:4px 0 4px;">Kinh nghiệm ôn thi CPA các môn khác</h2><p class="muted" style="margin-bottom:14px;">Kinh nghiệm ôn tập và làm bài thi tự luận các môn CPA, tổng hợp bởi đội ngũ Gonnapass. Kinh nghiệm môn Tiếng Anh xem tại <a href="#" data-act="goGuideTips">Tổng hợp dạng bài và kinh nghiệm ôn thi môn Tiếng Anh</a>.</p>' +
+      tipsCPA() + "</div>";
   }
 };
 
@@ -3524,7 +3530,7 @@ function startFlashQuiz(words, title) {
     var opts = shuffle([w].concat(others)).map(function (o) { return type === "m2v" ? o.meaning_vi : o.word; });
     return { wid: w.id, w: w, type: type, options: opts, answer: type === "m2v" ? w.meaning_vi : w.word };
   });
-  S.fq = { title: title, qs: qs, idx: 0, ans: {}, ok: {} };
+  S.fq = { title: title, qs: qs, idx: 0, ans: {}, ok: {}, startedAt: Date.now() };
   logEvent("mo_chuc_nang", "luyen_tu_moi");
   go("flashquiz");
 }
@@ -3569,7 +3575,37 @@ function fqRecord(ok) {
 }
 ACT.fqPick = function (t) { var fq = S.fq, q = fq.qs[fq.idx]; if (fq.ans[fq.idx] != null) return; var o = q.options[+t.getAttribute("data-i")]; fq.ans[fq.idx] = o; fqRecord(o === q.answer); };
 ACT.fqCheck = function () { var fq = S.fq, q = fq.qs[fq.idx], v = modalVal("fqInput").trim(); if (!v) return; fq.ans[fq.idx] = v; fqRecord(normText(v) === normText(q.w.word)); };
-ACT.fqNext = function () { S.fq.idx++; if (S.fq.idx >= S.fq.qs.length) addSession({ kind: "vocab", mode: "flashquiz", title: S.fq.title, total: S.fq.qs.length, correct: Object.keys(S.fq.ok).filter(function (k) { return S.fq.ok[k]; }).length, score: 0 }), Sync.touch(); render(); };
+ACT.fqNext = function () {
+  var fq = S.fq; fq.idx++;
+  if (fq.idx >= fq.qs.length) {
+    // lưu chi tiết để xem lại ở Lịch sử làm bài (lưu kèm nội dung từ vì từ tự ghi trong vở ghi có thể bị sửa/xoá)
+    var c = Object.keys(fq.ok).filter(function (k) { return fq.ok[k]; }).length, dur = Math.round((Date.now() - (fq.startedAt || Date.now())) / 1000);
+    var h = { id: uid(), at: Date.now(), kind: "vocab", mode: "flashquiz", title: fq.title, durSec: dur, items: fq.qs.map(function (q, i) {
+      return { type: q.type, word: q.w.word, ipa: q.w.ipa || "", pos: q.w.pos || "", meaning: q.w.meaning_vi, example: q.w.example || "", options: q.options || null, answer: q.answer || q.w.word, ans: fq.ans[i] == null ? "" : fq.ans[i], ok: !!fq.ok[i] };
+    }) };
+    S.hist.unshift(h); S.hist = S.hist.slice(0, HIST_MAX);
+    addSession({ id: h.id, kind: "vocab", mode: "flashquiz", title: fq.title, total: fq.qs.length, correct: c, score: 0, durSec: dur });
+    Sync.touch(true);
+  }
+  render();
+};
+// xem lại lượt luyện từ mới (từ Lịch sử làm bài)
+function vocabReviewHtml(h) {
+  var f = S.params.filter || "all", n = h.items.length, c = h.items.filter(function (x) { return x.ok; }).length;
+  var rows = h.items.map(function (x, i) {
+    if (f === "wrong" && x.ok) return "";
+    var q = x.type === "fill" ? "Điền từ còn thiếu (gợi ý nghĩa: " + esc(x.meaning) + ")" : x.type === "m2v" ? "Chọn nghĩa đúng của từ <b>" + esc(x.word) + "</b>" : "Chọn từ tiếng Anh đúng với nghĩa <b>" + esc(x.meaning) + "</b>";
+    var opts = x.options ? '<div class="options">' + x.options.map(function (o, k) { return '<div class="opt' + (o === x.answer ? " correct" : o === x.ans ? " wrong" : "") + '"><span class="lab">' + "ABCD"[k] + "</span><span>" + esc(o) + "</span></div>"; }).join("") + "</div>"
+      : '<div class="yours"><b>Bạn điền:</b> ' + (x.ans ? esc(x.ans) : "(bỏ trống)") + "</div>";
+    return '<div class="card"><div class="small muted">Câu ' + (i + 1) + '</div><div class="qtext">' + q + "</div>" + opts +
+      '<div class="feedback ' + (x.ok ? "ok" : "bad") + '">' + (x.ok ? "Chính xác" : "Chưa đúng · Đáp án: " + esc(x.answer)) + "</div>" +
+      '<div class="explain">' + esc(x.word) + " " + esc(x.ipa) + (x.pos ? " (" + esc(x.pos) + ")" : "") + ": " + esc(x.meaning) + (x.example ? "\nVí dụ: " + esc(x.example) : "") + "</div></div>";
+  }).join("");
+  return '<div class="card"><div class="row between"><div class="row"><button class="backlink" data-act="goBack">' + icon("back", "sm") + ' Quay lại</button><button class="backlink" data-act="goHome">Về trang chủ</button></div><span class="small muted">' + fmtDate(h.at) + "</span></div>" +
+    '<h2 style="margin:10px 0 4px;">' + esc(h.title) + '</h2><div class="row" style="gap:18px;margin:8px 0;"><div><span class="scorebig" style="font-size:30px;">' + c + "/" + n + '</span> <span class="small muted">từ đúng (' + fmtPct(c, n) + ')</span></div><div class="small muted">Thời gian: ' + fmtDur(h.durSec) + "</div></div>" +
+    '<div class="row" style="margin-top:6px;"><span class="small muted">Xem:</span>' + [["all", "Tất cả"], ["wrong", "Từ sai"]].map(function (x) { return '<button class="chip' + (f === x[0] ? " on" : "") + '" data-act="resFilter" data-f="' + x[0] + '">' + x[1] + "</button>"; }).join("") + "</div></div>" +
+    (rows || '<div class="card muted">Bạn trả lời đúng tất cả các từ trong lượt này.</div>');
+}
 ACT.fqMark = function () { var q = S.fq.qs[S.fq.idx]; flSet(q.wid, { again: true, known: false }); toast("Đã đánh dấu học lại từ này"); };
 ACT.fqRetryWrong = function () { var fq = S.fq; startFlashQuiz(fq.qs.filter(function (q, i) { return !fq.ok[i]; }).map(function (q) { return q.w; }), "Luyện lại từ sai"); };
 
@@ -3620,7 +3656,7 @@ VIEWS.stats = {
     var hist = (S.ud.sessions || []).slice(0, 40).map(function (s) {
       var h = S.hist.filter(function (x) { return x.id === s.id; })[0];
       var res = s.kind === "exam" ? "<b>" + s.score + "</b>/100 · " + s.correct + "/" + s.total + " câu" + ((s.mode === "year" || s.mode === "random" || s.mode === "custom") ? (s.score >= PASS_MARK ? ' <span class="pill success">Đạt</span>' : ' <span class="pill danger">Chưa đạt</span>') : "") : s.correct + "/" + s.total + " câu (" + fmtPct(s.correct, s.total) + ")";
-      return "<tr><td>" + fmtDate(s.at) + "</td><td>" + esc(MODE_LABEL[s.mode] || s.mode) + "</td><td>" + esc(s.title || "") + "</td><td>" + res + '</td><td class="num">' + (s.durSec ? fmtDur(s.durSec) : "-") + "</td><td>" + (h ? '<button class="btn sm secondary" data-act="viewHist" data-id="' + esc(h.id) + '">Xem lại</button>' : "") + "</td></tr>";
+      return "<tr><td>" + fmtDate(s.at) + "</td><td>" + esc(MODE_LABEL[s.mode] || s.mode) + "</td><td>" + esc(s.title || "") + "</td><td>" + res + '</td><td class="num">' + (s.durSec ? fmtDur(s.durSec) : "-") + "</td><td>" + (h ? '<button class="btn sm secondary" data-act="viewHist" data-id="' + esc(h.id) + '">Xem lại</button>' : '<span class="small muted nowrap" data-tip="Chỉ lưu chi tiết ' + HIST_MAX + ' bài làm gần nhất. Các lượt luyện tập làm trước bản cập nhật 26/09/2026 không có chi tiết để xem lại.">Không có chi tiết</span>') + "</td></tr>";
     }).join("");
     var mist = Object.keys(S.ud.stats).map(function (id) { return { id: id, s: S.ud.stats[id] }; }).filter(function (x) { return x.s[2] > 0 && ITEMS[x.id]; })
       .sort(function (a, b) { return (b.s[2] - b.s[1]) - (a.s[2] - a.s[1]) || b.s[2] - a.s[2]; }).slice(0, 10).map(function (x) {
@@ -3656,7 +3692,7 @@ ACT.practiceWeak = function (t) { S.secSel = {}; S.secSel[t.getAttribute("data-k
 // =====================================================================================
 // chức năng chính trên trang chủ -> sự kiện "mở chức năng" tương ứng (mỗi chức năng đếm 1 lần mở, không cộng trùng)
 var FEATURES_MAIN = [["f:de_theo_nam", "Làm đề thi CPA theo từng năm"], ["f:ngau_nhien", "Luyện tập ngẫu nhiên tổng hợp"], ["f:test_nhanh", "Test nhanh"],
-  ["f:kinh_nghiem", "Cấu trúc đề thi và dạng bài các năm"], ["f:bi_kip", "Bí kíp ôn thi CPA"], ["f:theo_dang_bai", "Luyện theo dạng bài"], ["f:cau_le", "Ôn luyện ngẫu nhiên câu lẻ"],
+  ["f:kinh_nghiem", "Tổng hợp dạng bài và kinh nghiệm ôn thi môn Tiếng Anh"], ["f:bi_kip", "Kinh nghiệm ôn thi CPA các môn khác"], ["f:theo_dang_bai", "Luyện theo dạng bài"], ["f:cau_le", "Ôn luyện ngẫu nhiên câu lẻ"],
   ["f:luyen_lai", "Luyện lại câu sai/ cần học lại"], ["f:hoc_tu_moi", "Học từ mới"], ["f:vo_ghi", "Vở ghi của tôi"], ["f:thong_ke", "Đánh giá sự tiến bộ"], ["f:de_muc_do", "Đề luyện tập theo mức độ"]];
 var STATUS_LABEL = { moi: "Chưa xem", da_xem: "Đã xem", da_xu_ly: "Đã xử lý", da_sua: "Đã sửa Database", da_duyet: "Đã duyệt", tu_choi: "Từ chối" };
 function adm(action, payload) {
@@ -3682,12 +3718,25 @@ ACT.admLogin = function () {
 };
 function admLoad() {
   var a = S.adm; a.loading = true; render();
+  admFetch().then(function () { a.loading = false; if (S.view === "admin") render(); });
+}
+function admFetch() {
+  var a = S.adm;
   var jobs = [adm("adminOverview").then(function (r) { a.ov = r; })];
   ["baoloi", "dexuat", "gopy"].forEach(function (t) { jobs.push(adm("adminList", { type: t }).then(function (r) { a[t] = r.items; })); });
   jobs.push(adm("adminGetTrial").then(function (r) { a.trial = r.config; }).catch(function () { a.trial = null; }));
   jobs.push(adm("adminListCustomExams").then(function (r) { a.cexams = r.exams || []; CUSTOM_EXAMS = a.cexams.filter(function (e) { return e.active !== false; }); lsSet("gnp:customExams", CUSTOM_EXAMS); }).catch(function () { a.cexams = []; }));
-  Promise.all(jobs).then(function () { a.loading = false; if (S.view === "admin") render(); }).catch(function () { a.loading = false; if (S.view === "admin") render(); });
+  return Promise.all(jobs).catch(function () {}).then(function () { a.loading = false; });
 }
+// ---- phản hồi tức thì: đổi dữ liệu trên màn hình trước, máy chủ lưu ở nền; lỗi thì tải lại dữ liệu thật
+function admSync() {   // tải lại dữ liệu ở nền, không làm gián đoạn khi đang mở hộp thoại / đang gõ
+  clearTimeout(admSync._t);
+  admSync._t = setTimeout(function () {
+    var a = S.adm; if (!a || S.view !== "admin") return;
+    admFetch().then(function () { if (S.view === "admin" && !el("modal-root").innerHTML && !(document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))) render(); });
+  }, 1500);
+}
+function admFail(msg) { return function () { toast(msg || "Không lưu được, vui lòng thử lại"); admLoad(); }; }
 ACT.admTab = function (t) { S.adm.tab = t.getAttribute("data-t"); render(); };
 ACT.admReload = function () { admLoad(); };
 VIEWS.admin = {
@@ -3788,10 +3837,35 @@ function admStudents(a) {
     '<p class="small muted" style="margin:0 0 10px;">Khách tự đăng ký là tài khoản <b>Dùng thử</b>. Khi khách mua sách, bấm <b>Kích hoạt</b>: hệ thống mở toàn bộ tính năng và tự gửi email thông báo. Bấm vào một dòng để xem chi tiết tiến độ.</p>' +
     '<div class="tablewrap"><table><thead><tr><th>Tài khoản</th><th>Trạng thái</th><th>Ngày tạo</th><th class="num">Lượt truy cập</th><th>Truy cập gần nhất</th><th class="num">Lượt làm câu</th><th class="num">% đúng</th><th class="num">Phút học</th><th class="num">Điểm TB</th></tr></thead><tbody>' + rows + "</tbody></table></div></div>";
 }
+// ---- đặt lại mật khẩu cho học viên (khi học viên quên mật khẩu)
+ACT.admResetPw = function (t) {
+  var p = t.getAttribute("data-p"), s = S.adm.ov.students.filter(function (x) { return x.phone === p; })[0] || { phone: p, name: p, email: "" };
+  openModal("<h3>Đặt lại mật khẩu</h3><p>Tài khoản <b>" + esc(s.name) + "</b> (" + esc(p) + ")</p>" +
+    '<p class="small muted">Hệ thống tạo mật khẩu tạm mới, đăng xuất học viên khỏi mọi thiết bị và gửi mật khẩu qua email. Học viên đăng nhập bằng mật khẩu tạm rồi tự đổi mật khẩu.</p>' +
+    '<label class="field" style="margin-top:8px;">Email nhận mật khẩu (có thể sửa nếu học viên đổi email)<input type="email" id="rpEmail" value="' + esc(s.email || "") + '" placeholder="Để trống nếu học viên không có email"></label>' +
+    '<p class="small muted" style="margin-top:6px;">Không có email: mật khẩu tạm sẽ hiện ở đây để bạn gửi cho học viên qua Zalo/điện thoại.</p>' +
+    '<div class="row end" style="margin-top:12px;"><button class="btn secondary" data-act="closeModal">Huỷ</button><button class="btn" data-act="admResetPwOk" data-p="' + esc(p) + '">Đặt lại và gửi</button></div>');
+};
+ACT.admResetPwOk = function (t) {
+  var p = t.getAttribute("data-p"), email = modalVal("rpEmail").trim();
+  if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return toast("Email chưa đúng định dạng");
+  busy(t, "Đang đặt lại…");
+  adm("adminResetPassword", { target: p, email: email }).then(function (r) {
+    openModal("<h3>Đã đặt lại mật khẩu</h3>" + (r.emailed ? '<p>Đã gửi mật khẩu tạm tới email <b>' + esc(r.email) + "</b>. Học viên kiểm tra hộp thư (cả mục Spam) rồi đăng nhập.</p>"
+      : '<p>Tài khoản chưa có email nên hệ thống chưa gửi thư. Mật khẩu tạm của <b>' + esc(p) + '</b> là:</p><div class="pw-box">' + esc(r.password) + '</div><p class="small muted">Vui lòng gửi mật khẩu này cho học viên qua Zalo/điện thoại và nhắc học viên đổi mật khẩu sau khi đăng nhập.</p>') +
+      '<div class="row end" style="margin-top:12px;"><button class="btn" data-act="closeModal">Đóng</button></div>', { noFocus: true });
+    admSync();
+  }).catch(function (e) { unbusy(t); toast(e.code === "bad_email" ? "Email chưa đúng định dạng" : "Không đặt lại được mật khẩu, vui lòng thử lại"); });
+};
 ACT.admActivate = function (t) {
   var p = t.getAttribute("data-p"), s = S.adm.ov.students.filter(function (x) { return x.phone === p; })[0];
   confirmBox("Kích hoạt đầy đủ tính năng cho <b>" + esc(s ? s.name : p) + "</b> (" + esc(p) + ")? Hệ thống sẽ gửi email thông báo" + (s && s.email ? " tới " + esc(s.email) : "") + ".", "Kích hoạt", function () {
-    adm("adminActivate", { target: p }).then(function (r) { toast("Đã kích hoạt" + (r.emailed ? " và gửi email" : " (tài khoản chưa có email nên không gửi thư)")); admLoad(); }).catch(function () { toast("Không kích hoạt được"); });
+    // đổi trạng thái ngay trên màn hình, máy chủ xử lý (kèm gửi email) ở nền; lỗi thì trả lại như cũ
+    var old = s ? { state: s.state, status: s.status, activated: s.activated } : null;
+    if (s) { s.state = "hoat_dong"; s.status = "hoat_dong"; s.activated = dayKey() + " " + pad2(new Date().getHours()) + ":" + pad2(new Date().getMinutes()) + ":00"; }
+    render(); toast("Đã kích hoạt " + (s ? s.name : p) + ". Đang gửi email thông báo…");
+    adm("adminActivate", { target: p }).then(function (r) { toast("Đã kích hoạt" + (r.emailed ? " và gửi email thông báo" : " (tài khoản chưa có email nên không gửi thư)")); admSync(); })
+      .catch(function () { if (s && old) { s.state = old.state; s.status = old.status; s.activated = old.activated; } render(); toast("Không kích hoạt được, vui lòng thử lại"); });
   });
 };
 ACT.admExportStudents = function () {
@@ -3853,7 +3927,11 @@ ACT.admDoImport = function () {
 ACT.admSaveStudent = function (t) {
   var phone = normalizePhone(t.getAttribute("data-p") || modalVal("asPhone")), name = modalVal("asName").trim();
   if (phone.length < 10 || !name) return toast("Nhập số điện thoại (10 số) và họ tên");
-  adm("adminUpsertStudent", { target: phone, name: name, email: modalVal("asEmail").trim(), status: modalVal("asStatus") }).then(function () { closeModal(); toast("Đã lưu học viên"); admLoad(); }).catch(function () { toast("Không lưu được"); });
+  var email = modalVal("asEmail").trim(), status = modalVal("asStatus"), list = S.adm.ov.students, s = list.filter(function (x) { return x.phone === phone; })[0];
+  if (!s) { s = { phone: phone, name: name, email: email, role: "hocvien", status: status, state: status, created: dayKey() + " 00:00:00", lastVisit: "", visits: 0, source: "admin_tao", activated: "", hasPassword: false }; list.unshift(s); }
+  else { s.name = name; s.email = email; s.status = status; s.state = status; }
+  closeModal(); render(); toast("Đã lưu học viên " + name);
+  adm("adminUpsertStudent", { target: phone, name: name, email: email, status: status }).then(function (r) { if (r && r.emailed) toast("Đã lưu và gửi email kích hoạt cho " + name); admSync(); }).catch(admFail("Không lưu được học viên, vui lòng thử lại"));
 };
 ACT.admStudent = function (t) {
   var p = t.getAttribute("data-p"), s = S.adm.ov.students.filter(function (x) { return x.phone === p; })[0];
@@ -3876,7 +3954,7 @@ ACT.admStudent = function (t) {
       (exPts.length ? '<h4 style="margin:10px 0 4px;">Điểm các bài thi gần đây (thang 100)</h4>' + svgLine(exPts) : "") +
       '<h4 style="margin:10px 0 8px;">Kết quả theo dạng bài</h4>' + (bars || '<p class="muted small">Chưa có dữ liệu.</p>') +
       '<h4 style="margin:12px 0 8px;">Lịch sử làm bài</h4>' + (sess ? '<div class="tablewrap"><table><thead><tr><th>Thời gian</th><th>Loại</th><th>Nội dung</th><th>Kết quả</th></tr></thead><tbody>' + sess + "</tbody></table></div>" : '<p class="muted small">Chưa có.</p>') +
-      '<div class="row end" style="margin-top:12px;"><button class="btn secondary" data-act="admAddStudent" data-p="' + esc(s.phone) + '">Sửa thông tin / khoá</button><button class="btn" data-act="closeModal">Đóng</button></div>';
+      '<div class="row end" style="margin-top:12px;"><button class="btn secondary" data-act="admResetPw" data-p="' + esc(s.phone) + '" data-tip="Tạo mật khẩu tạm mới, đăng xuất học viên khỏi mọi thiết bị và gửi mật khẩu qua email">' + icon("lock", "sm") + ' Đặt lại mật khẩu</button><button class="btn secondary" data-act="admAddStudent" data-p="' + esc(s.phone) + '">Sửa thông tin / khoá</button><button class="btn" data-act="closeModal">Đóng</button></div>';
   }).catch(function () { closeModal(); toast("Không tải được dữ liệu học viên"); });
 };
 // ---- sửa câu hỏi
@@ -3939,14 +4017,19 @@ ACT.admSaveQ = function (t) {
   var prev = QEDITS[it.id] || {};
   if (prev.alt_answers_add) patch.alt_answers_add = prev.alt_answers_add.filter(function (x) { return (patch.alt_answers || []).indexOf(x) < 0; });
   var rid = t.getAttribute("data-report"), note = el("eqNote") ? modalVal("eqNote").trim() : "";
+  var before = QEDITS[it.id];
+  QEDITS[it.id] = patch; lsSet("gnp:qedits", QEDITS); applyQEdits(QEDITS);
+  if (rid) { var bx = (S.adm.baoloi || []).filter(function (y) { return y.ID === rid; })[0]; if (bx) { bx.TrangThai = "da_sua"; bx.GhiChuAdmin = note; bx.ThoiGianXuLy = dayKey() + " " + pad2(new Date().getHours()) + ":" + pad2(new Date().getMinutes()) + ":00"; } }
+  closeModal(); render(); toast(rid ? "Đã sửa Database, đang gửi thông báo cho học viên…" : "Đã lưu bản sửa");
   adm("adminSaveQEdit", { qid: it.id, patch: patch }).then(function () {
-    QEDITS[it.id] = patch; lsSet("gnp:qedits", QEDITS); applyQEdits(QEDITS);
     if (rid) return adm("adminSetStatus", { type: "baoloi", id: rid, status: "da_sua", note: note });
-  }).then(function () { closeModal(); toast(rid ? "Đã sửa Database và gửi thông báo cho học viên báo lỗi" : "Đã lưu. Học viên sẽ nhận bản sửa khi mở lại website."); admLoad(); }).catch(function () { toast("Không lưu được"); });
+  }).then(function () { toast(rid ? "Đã sửa Database và gửi thông báo cho học viên báo lỗi" : "Đã lưu. Học viên sẽ nhận bản sửa khi mở lại website."); admSync(); })
+    .catch(function () { if (before) QEDITS[it.id] = before; else delete QEDITS[it.id]; lsSet("gnp:qedits", QEDITS); applyQEdits(QEDITS); admFail("Không lưu được bản sửa, vui lòng thử lại")(); });
 };
 ACT.admRevertQ = function (t) {
   var id = t.getAttribute("data-id");
-  adm("adminSaveQEdit", { qid: id, patch: null }).then(function () { delete QEDITS[id]; lsSet("gnp:qedits", QEDITS); applyQEdits(QEDITS); closeModal(); toast("Đã khôi phục bản gốc"); render(); });
+  var before = QEDITS[id]; delete QEDITS[id]; lsSet("gnp:qedits", QEDITS); applyQEdits(QEDITS); closeModal(); render(); toast("Đã khôi phục bản gốc");
+  adm("adminSaveQEdit", { qid: id, patch: null }).catch(function () { QEDITS[id] = before; lsSet("gnp:qedits", QEDITS); applyQEdits(QEDITS); admFail("Không khôi phục được, vui lòng thử lại")(); });
 };
 // ---- báo lỗi, đề xuất đáp án, góp ý
 function qPreview(qid) {
@@ -4040,7 +4123,7 @@ function setStatusNow(type, id, status, note) {
   if (S.adm.ov && S.adm.ov.pending && type !== "dexuat") S.adm.ov.pending[type] = list.filter(function (y) { return y.TrangThai === "moi"; }).length;
   render();
   var body = { type: type, id: id, status: status }; if (note != null) body.note = note;
-  adm("adminSetStatus", body).then(function () { toast(STATUS_LABEL[status] ? "Đã chuyển sang: " + STATUS_LABEL[status] : "Đã cập nhật"); })
+  adm("adminSetStatus", body).then(function () { toast(STATUS_LABEL[status] ? "Đã chuyển sang: " + STATUS_LABEL[status] : "Đã cập nhật"); admSync(); })
     .catch(function () { x.TrangThai = old.s; x.GhiChuAdmin = old.n; render(); toast("Không cập nhật được, vui lòng thử lại"); });
 }
 ACT.admSetSt = function (t) {
@@ -4068,15 +4151,19 @@ ACT.admImages = function (t) {
 };
 ACT.admZoom = function (t) { t.classList.toggle("zoom"); };
 ACT.admStatus = function (t) {
-  adm("adminSetStatus", { type: t.getAttribute("data-type"), id: t.getAttribute("data-id"), status: t.getAttribute("data-s") }).then(function () { toast("Đã cập nhật"); admLoad(); }).catch(function () { toast("Không cập nhật được"); });
+  setStatusNow(t.getAttribute("data-type"), t.getAttribute("data-id"), t.getAttribute("data-s"));
 };
 ACT.admAcceptAlt = function (t) {
   var qid = t.getAttribute("data-q"), ans = t.getAttribute("data-a"), ids = (t.getAttribute("data-ids") || t.getAttribute("data-id") || "").split(",").filter(Boolean);
-  adm("adminAddAltAnswer", { qid: qid, answer: ans, suggestionIds: ids }).then(function () {
-    var cur = QEDITS[qid] || {}; cur.alt_answers_add = (cur.alt_answers_add || []).concat([ans]); QEDITS[qid] = cur; lsSet("gnp:qedits", QEDITS); applyQEdits(QEDITS);
-    toast("Đã thêm đáp án đúng cho toàn bộ học viên"); admLoad();
-  }).catch(function () { toast("Không cập nhật được"); });
+  var cur = QEDITS[qid] || {}; cur.alt_answers_add = (cur.alt_answers_add || []).concat([ans]); QEDITS[qid] = cur; lsSet("gnp:qedits", QEDITS); applyQEdits(QEDITS);
+  sugLocal(ids, "da_duyet", qid, ans); render(); toast("Đã chấp nhận đáp án cho toàn bộ học viên");
+  adm("adminAddAltAnswer", { qid: qid, answer: ans, suggestionIds: ids }).then(function () { admSync(); }).catch(admFail("Không lưu được, vui lòng thử lại"));
 };
+// đổi trạng thái đề xuất trên màn hình (kèm các đề xuất cùng câu + cùng câu trả lời)
+function sugLocal(ids, st, qid, ans, note) {
+  var set = {}; ids.forEach(function (i) { set[i] = 1; });
+  (S.adm.dexuat || []).forEach(function (x) { if (set[x.ID] || (qid && x.MaCau === qid && normText(x.DapAnHocVien) === normText(ans))) { x.TrangThai = st; if (note != null) x.GhiChuAdmin = note; } });
+}
 ACT.admSugReject = function (t) {
   openModal('<h3>Từ chối đáp án đề xuất</h3><p class="small muted">Học viên đã đề xuất sẽ nhận thông báo "Sửa thành sai" kèm lý do; từ lần làm sau câu trả lời này được chấm theo đáp án chuẩn.</p><label class="field">Lý do (gửi học viên)<textarea id="sgNote" rows="3" placeholder="Ví dụ: Câu trả lời sai thì của động từ…"></textarea></label>' +
     '<div class="row end" style="margin-top:12px;"><button class="btn secondary" data-act="closeModal">Huỷ</button><button class="btn" data-act="admSugRejectOk" data-ids="' + esc(t.getAttribute("data-ids")) + '">Từ chối</button></div>');
@@ -4084,12 +4171,13 @@ ACT.admSugReject = function (t) {
 ACT.admSugRejectOk = function (t) {
   var note = modalVal("sgNote").trim(); if (!note) return toast("Vui lòng nhập lý do để học viên hiểu");
   var ids = (t.getAttribute("data-ids") || "").split(",").filter(Boolean);
-  closeModal();
-  adm("adminSetStatus", { type: "dexuat", ids: ids, status: "tu_choi", note: note }).then(function () { toast("Đã từ chối và gửi thông báo cho học viên"); admLoad(); }).catch(function () { toast("Không cập nhật được"); });
+  closeModal(); sugLocal(ids, "tu_choi", null, null, note); render(); toast("Đã từ chối và gửi thông báo cho học viên");
+  adm("adminSetStatus", { type: "dexuat", ids: ids, status: "tu_choi", note: note }).then(function () { admSync(); }).catch(admFail("Không cập nhật được, vui lòng thử lại"));
 };
 ACT.admSugStatus = function (t) {
   var ids = (t.getAttribute("data-ids") || "").split(",").filter(Boolean);
-  adm("adminSetStatus", { type: "dexuat", ids: ids, status: t.getAttribute("data-s") }).then(function () { toast("Đã cập nhật"); admLoad(); }).catch(function () { toast("Không cập nhật được"); });
+  sugLocal(ids, t.getAttribute("data-s")); render(); toast("Đã cập nhật");
+  adm("adminSetStatus", { type: "dexuat", ids: ids, status: t.getAttribute("data-s") }).then(function () { admSync(); }).catch(admFail("Không cập nhật được, vui lòng thử lại"));
 };
 
 // =====================================================================================
@@ -4138,18 +4226,20 @@ ACT.admBuildSave = function () {
   var b = readBuilder(); if (!b.def) return;
   var title = b.title || ("Đề luyện tập mức " + MIX_NAME[b.preset]);
   var ex = { id: uid(), title: title, durationMin: b.dur, mix: b.mix, level: b.preset === "de" || b.preset === "tb" || b.preset === "kho" ? b.preset : null, parts: compactDef(b.def), active: true };
-  adm("adminSaveCustomExam", { exam: ex }).then(function (r) {
-    toast("Đã lưu và giao đề cho học viên"); S.adm.bld = { preset: b.preset, mix: Object.assign({}, b.mix), title: "", dur: b.dur }; admLoad();
-  }).catch(function () { toast("Không lưu được đề"); });
+  S.adm.cexams = [ex].concat(S.adm.cexams || []); CUSTOM_EXAMS = S.adm.cexams.filter(function (e) { return e.active !== false; }); lsSet("gnp:customExams", CUSTOM_EXAMS);
+  S.adm.bld = { preset: b.preset, mix: Object.assign({}, b.mix), title: "", dur: b.dur }; render(); toast("Đã lưu và giao đề cho học viên");
+  adm("adminSaveCustomExam", { exam: ex }).then(function () { admSync(); }).catch(admFail("Không lưu được đề, vui lòng thử lại"));
 };
 ACT.admCexToggle = function (t) {
   var e = (S.adm.cexams || []).filter(function (x) { return x.id === t.getAttribute("data-id"); })[0]; if (!e) return;
-  adm("adminSetCustomExam", { id: e.id, active: e.active === false }).then(function () { toast("Đã cập nhật"); admLoad(); }).catch(function () { toast("Không cập nhật được"); });
+  var on = e.active === false; e.active = on; CUSTOM_EXAMS = (S.adm.cexams || []).filter(function (x) { return x.active !== false; }); lsSet("gnp:customExams", CUSTOM_EXAMS); render(); toast(on ? "Đã mở lại đề cho học viên" : "Đã ẩn đề với học viên");
+  adm("adminSetCustomExam", { id: e.id, active: on }).then(function () { admSync(); }).catch(admFail("Không cập nhật được, vui lòng thử lại"));
 };
 ACT.admCexDelete = function (t) {
   var id = t.getAttribute("data-id");
   confirmBox("Xoá đề này? Học viên sẽ không còn thấy đề, kết quả đã làm vẫn được giữ trong lịch sử.", "Xoá đề", function () {
-    adm("adminSetCustomExam", { id: id, remove: true }).then(function () { toast("Đã xoá đề"); admLoad(); }).catch(function () { toast("Không xoá được"); });
+    S.adm.cexams = (S.adm.cexams || []).filter(function (x) { return x.id !== id; }); CUSTOM_EXAMS = S.adm.cexams.filter(function (x) { return x.active !== false; }); lsSet("gnp:customExams", CUSTOM_EXAMS); render(); toast("Đã xoá đề");
+    adm("adminSetCustomExam", { id: id, remove: true }).then(function () { admSync(); }).catch(admFail("Không xoá được, vui lòng thử lại"));
   });
 };
 // =====================================================================================
@@ -4215,7 +4305,8 @@ ACT.admSaveTrial = function () {
   var years = Array.prototype.slice.call(document.querySelectorAll(".trYear")).filter(function (x) { return x.checked; }).map(function (x) { return x.value; });
   var cfg = { enabled: el("trOn").checked, years: years };
   if (!years.length) return toast("Chọn ít nhất 1 năm đề cho dùng thử");
-  adm("adminSetTrial", { config: cfg }).then(function () { S.adm.trial = cfg; toast("Đã lưu cấu hình dùng thử"); render(); }).catch(function () { toast("Không lưu được"); });
+  var old = S.adm.trial; S.adm.trial = cfg; render(); toast("Đã lưu cấu hình dùng thử");
+  adm("adminSetTrial", { config: cfg }).catch(function () { S.adm.trial = old; render(); toast("Không lưu được cấu hình, vui lòng thử lại"); });
 };
 document.addEventListener("change", function (ev) {
   var t = ev.target; if (!t.classList || !t.classList.contains("trYear")) return;
