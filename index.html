@@ -552,6 +552,111 @@ tr.st-row.st-da_xu_ly, tr.st-row.st-da_sua, tr.st-row.st-tu_choi{background:var(
 .topbar .brand{min-width:0; flex:0 1 auto;}
 .userpill .nm{max-width:160px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 
+/* tin tức: trình bày lại */
+.news{margin-top:18px;}
+.news-title{display:flex; justify-content:space-between; align-items:flex-end; gap:12px; margin:0 2px 12px; padding-bottom:8px; border-bottom:2px solid var(--line);}
+.news-title h3{margin:0; font-size:18px; color:var(--accent); position:relative;}
+.news-title h3::after{content:""; position:absolute; left:0; bottom:-10px; width:56px; height:2px; background:var(--accent-2);}
+.news-title a{font-size:13px; color:var(--accent); font-weight:600; text-decoration:none;} .news-title a:hover{text-decoration:underline;}
+.news-grid{align-items:stretch; gap:18px;}
+.news-col{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow-2); transition:transform .15s, box-shadow .15s;}
+.news-col:hover{transform:translateY(-2px); box-shadow:var(--shadow-3);}
+.news-head{padding:12px 16px;}
+.news-body{flex:1; display:flex; flex-direction:column; padding:14px 16px 16px;}
+.news-img{border-radius:10px; overflow:hidden;}
+.news-ph{width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; background:linear-gradient(135deg, var(--nc), #002060); color:#fff;}
+.news-ph img{width:56px; height:56px; object-fit:contain; background:#fff; border-radius:12px; padding:5px;}
+.news-ph span{color:#fff !important; opacity:1 !important; font-size:15px; letter-spacing:.3px;}
+.news-meta{font-size:12px; color:var(--muted); margin-top:10px;}
+.news-t{margin:4px 0 6px; font-size:15.5px; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.8em;}
+.news-ex{min-height:4.6em;}
+.news-more{display:inline-block; margin-top:8px; font-size:13px; font-weight:600; color:var(--nc); filter:brightness(.85);}
+.news-list{margin-top:12px; padding-top:4px;}
+.news-list li{padding:0; border-bottom:1px dashed var(--line);} .news-list li:last-child{border-bottom:0;}
+.news-list a{display:flex; justify-content:space-between; gap:10px; padding:9px 0; font-size:13.5px;}
+.news-list .nl-t{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; position:relative; padding-left:12px;}
+.news-list .nl-t::before{content:""; position:absolute; left:0; top:.55em; width:5px; height:5px; border-radius:50%; background:var(--nc);}
+.news-list .nl-d{flex:none; font-size:12px; color:var(--muted); padding-top:1px;}
+@media (max-width:560px){ .news-title h3{font-size:16.5px;} .news-title a{font-size:12.5px; text-align:right;} .news-title{align-items:center;} }
+/* ===== Tổng hợp dạng bài & kinh nghiệm (bản 26/09.3) ===== */
+.gd-split{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0;}
+.gd-split > div{display:flex; align-items:center; gap:10px; background:var(--surface-2); border-radius:10px; padding:10px 12px;}
+.gd-split-l{font-weight:700; min-width:64px;}
+.gd-bar{flex:1; height:10px; background:var(--surface); border-radius:999px; overflow:hidden;} .gd-bar i{display:block; height:100%; background:var(--accent);} .gd-bar.w i{background:var(--accent-2);}
+.gd-struct .gd-sec{font-weight:700; color:var(--accent); white-space:nowrap;}
+.gd-struct tr.gd-total td{background:var(--accent); color:#fff; font-weight:700;}
+.gd-book{display:flex; align-items:center; gap:14px; margin-top:18px; padding:14px 16px; border-radius:12px; background:linear-gradient(120deg,#fff7ec,#fdecd6); border:1px solid #f6d3a6;}
+.gd-book-ic{flex:none; width:42px; height:42px; border-radius:10px; background:var(--accent-2); color:#fff; display:flex; align-items:center; justify-content:center;}
+.gd-book-t{flex:1; display:flex; flex-direction:column; gap:2px; font-size:13.5px; color:#5b3a10;} .gd-book-t b{font-size:15px; color:#7a4300;}
+@media (max-width:560px){ .gd-book{flex-direction:column; align-items:flex-start;} .gd-split{grid-template-columns:1fr;} }
+.gd-periods{display:flex; flex-direction:column; gap:10px;}
+.gd-period{border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:var(--surface);}
+.gd-period.main{border:2px solid var(--accent); background:var(--accent-soft);}
+.gd-period-h{display:flex; flex-direction:column; gap:2px; margin-bottom:8px;}
+.gd-pgrid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+@media (max-width:640px){ .gd-pgrid{grid-template-columns:1fr;} }
+.gd-pname{font-weight:700; color:var(--accent); margin-bottom:4px;}
+.gd-pitem{display:flex; gap:8px; align-items:baseline; font-size:13.5px; padding:3px 0;}
+.gd-s{display:inline-block; flex:none; padding:1px 7px; border-radius:6px; background:var(--accent); color:#fff; font-size:11.5px; font-weight:700;}
+.gd-no{color:var(--muted); opacity:.6;}
+.gd-v{font-size:11px; color:var(--muted); margin-right:3px;}
+.gd-years{min-width:960px;}
+.gd-years td.gd-has{background:transparent !important; color:inherit !important; border-left:0 !important;}
+.gd-tips{display:grid; gap:12px;} .gd-tips.two{grid-template-columns:1fr 1fr;} @media (max-width:640px){ .gd-tips.two{grid-template-columns:1fr;} }
+.gd-tip{display:flex; gap:12px; background:var(--surface-2); border-radius:12px; padding:14px;}
+.gd-tip h4{margin:0 0 6px; font-size:15px;} .gd-tip p{margin:0 0 8px; font-size:14px;}
+.gd-tip-ic{flex:none; width:38px; height:38px; border-radius:10px; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center;}
+.gd-ul{margin:0 0 10px; padding-left:18px; font-size:14px;} .gd-ul li{margin:3px 0;}
+.gd-hero{display:flex; align-items:center; gap:16px; padding:16px; border-radius:12px; background:linear-gradient(135deg,var(--hero-1),var(--hero-2)); color:#fff; font-size:14px; line-height:1.6;}
+.gd-hero-n{flex:none; font-family:var(--font-display); font-size:44px; font-weight:700; color:var(--accent-2); line-height:1;} .gd-hero-n span{font-size:18px; color:#fff; opacity:.8;}
+@media (max-width:560px){ .gd-hero{flex-direction:column; align-items:flex-start;} }
+.gd-prio{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px;}
+@media (max-width:760px){ .gd-prio{grid-template-columns:1fr 1fr;} }
+.gd-prio-i{display:flex; align-items:center; gap:10px; text-align:left; border:1px solid var(--line); background:var(--surface); border-radius:12px; padding:10px 12px; cursor:pointer; font:inherit; color:var(--ink);}
+.gd-prio-i:hover{border-color:var(--accent-2);}
+.gd-prio-n{font-family:var(--font-display); font-size:26px; font-weight:700; color:var(--accent-2); line-height:1;}
+.gd-prio-t{display:flex; flex-direction:column; font-size:13px; font-weight:600;} .gd-prio-t small{font-weight:400; color:var(--muted);}
+.gd-steps3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;}
+@media (max-width:640px){ .gd-steps3{grid-template-columns:1fr;} }
+.gd-steps3 > div{position:relative; background:var(--surface-2); border-radius:12px; padding:14px 14px 14px 52px; font-size:14px;}
+.gd-steps3 span{position:absolute; left:14px; top:14px; width:28px; height:28px; border-radius:999px; background:var(--accent-2); color:#fff; font-weight:700; display:flex; align-items:center; justify-content:center;}
+.gd-steps3 b{display:block;}
+.gd-prio-n{display:flex; flex-direction:column; align-items:center; min-width:40px;} .gd-prio-n small{font-size:11px; font-weight:600; color:var(--muted); margin-top:2px;}
+.gd-prio-t small{color:var(--accent-2); font-weight:600; margin-top:3px;}
+
+/* Bí kíp ôn thi CPA */
+.gd-hero-n svg{width:40px; height:40px; color:var(--accent-2);}
+.tips-errs{display:grid; grid-template-columns:1fr 1fr; gap:12px;} @media (max-width:700px){ .tips-errs{grid-template-columns:1fr;} }
+.tips-err{border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:var(--surface);}
+.tips-err-h{display:flex; align-items:center; gap:10px; margin-bottom:4px;}
+.tips-err-h span{flex:none; width:26px; height:26px; border-radius:999px; background:#fde7ea; color:#b3232f; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:13px;}
+.tips-err p{margin:0 0 8px;}
+.tips-fix{font-size:13.5px; background:#e8f6ef; border-radius:8px; padding:8px 10px;} .tips-fix b{color:#127a4d;}
+.tips-subj{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;} @media (max-width:800px){ .tips-subj{grid-template-columns:1fr 1fr;} } @media (max-width:520px){ .tips-subj{grid-template-columns:1fr;} }
+.tips-subj > div{background:var(--surface-2); border-radius:12px; padding:12px 14px; border-top:3px solid var(--accent);}
+.tips-subj p{margin:6px 0 0; font-size:13.5px;}
+/* chuông thông báo nằm sát tên người dùng */
+.topbar-in > .bell{margin-left:auto; margin-right:-4px;}
+.topbar-in > .topnav + .bell{margin-left:0;}
+.topbar-in > .topnav{margin-right:6px;}
+.tips-subj{display:flex; flex-wrap:wrap; gap:10px;} .tips-subj > div{flex:1 1 260px;}
+/* ===== căn chỉnh chung (26/09) ===== */
+.tabs{flex-wrap:wrap; overflow:visible; row-gap:0;}
+.tabs button{padding:10px 12px;}
+.chart{max-height:260px; width:100%; margin:0 auto;}
+.statgrid.c4{grid-template-columns:repeat(4,minmax(0,1fr));}
+@media (max-width:640px){ .statgrid.c4{grid-template-columns:1fr 1fr;} }
+.gd-go{white-space:nowrap;}
+@media (max-width:560px){
+  .gd-struct .gd-sec{font-size:12.5px; padding-right:4px;}
+  .gd-struct td:first-child{width:74px;}
+  .gd-pill{display:table; margin:0 0 4px;}
+  .tabs button{padding:8px 10px; font-size:13.5px;}
+}
+/* tiêu đề thẻ + điều khiển bên phải: căn đáy cho thẳng hàng */
+.card > .row.between:has(> label.field){align-items:flex-end;}
+.card > .row.between > h3{margin:0;}
+
 </style>
 </head>
 <body>
@@ -703,7 +808,7 @@ var TRIAL = { years: ["2010", "2011", "2012", "2013", "2014", "2015"], defaultPa
 var TRIAL_EXAM_YEARS = ["2024"];   // năm đề thi dùng thử được làm nguyên đề
 var HIST_MAX = 40;                  // số bài làm lưu chi tiết để xem lại
 var REVIEW_TITLE = "Luyện lại những câu từng làm sai/ đã đánh dấu cần học lại/ phân vân trong quá trình làm bài";
-var TRIAL_VIEWS = { login: 1, loading: 1, home: 1, practice: 1, exam: 1, results: 1, guide: 1, examList: 1, notices: 1 };
+var TRIAL_VIEWS = { login: 1, loading: 1, home: 1, practice: 1, exam: 1, results: 1, guide: 1, tips: 1, examList: 1, notices: 1 };
 var TRIAL_LOCKED = { goSections: 1, startRandomMix: 1, goReview: 1, goFlash: 1, goNotebook: 1, goStats: 1, openGoal: 1,
   openAdmin: 1, startCustomExam: 1, toggleMark: 1, addNoteFromItem: 1, reportError: 1, overridePrac: 1, overrideRes: 1, pracRedoWrong: 0 };
 function isTrial() { return !!(S.profile && (S.profile.status === "dung_thu" || S.profile.role === "trial")); }
@@ -1250,7 +1355,7 @@ var VIEWS = {};      // name -> {render(), after()}
 var ACT = {};        // data-act handlers
 var SCREEN_NAMES = { login: "Đăng nhập", home: "Trang chủ", examList: "Chọn đề thi theo năm", exam: "Làm bài thi", results: "Kết quả bài làm",
   sections: "Luyện theo dạng bài", practice: "Luyện tập", review: "Luyện lại câu sai/đánh dấu", notebook: "Vở ghi của tôi", flash: "Học từ mới",
-  flashquiz: "Luyện tập từ mới", stats: "Đánh giá sự tiến bộ", admin: "Trang quản trị", guide: "Tổng hợp dạng bài và kinh nghiệm học", notices: "Thông báo" };
+  flashquiz: "Luyện tập từ mới", stats: "Đánh giá sự tiến bộ", admin: "Trang quản trị", guide: "Cấu trúc đề thi và dạng bài các năm", tips: "Bí kíp ôn thi CPA", notices: "Thông báo" };
 
 // lịch sử màn hình để nút "Quay lại" trở về màn hình ngay trước đó (không tính màn hình làm bài/luyện tập)
 var NO_BACK = { loading: 1, login: 1, exam: 1, practice: 1, flashquiz: 1 };
@@ -1719,54 +1824,76 @@ function siteFooter() {
 // ---- tin tức mới nhất từ gonnapass.com (đọc trực tiếp qua WordPress API, lưu tạm 6 giờ trên trình duyệt)
 var NEWS_CATS = [{ id: 227, name: "Tin nổi bật", slug: "tin-noi-bat", color: "#f5a93b" }, { id: 216, name: "Kế toán - Thuế", slug: "ke-toan-thue", color: "#004a7c" }, { id: 222, name: "Kinh nghiệm ôn thi", slug: "kinh-nghiem-on-thi", color: "#8cc63f" }];
 var NEWS = null, NEWS_LOADING = false;
+// tiêu đề viết HOA toàn bộ -> viết hoa chữ đầu, giữ nguyên các từ viết tắt chuyên ngành
+var NEWS_ABBR = ["CPA", "ACCA", "CMA", "CFA", "IFRS", "VAS", "BCTC", "GTGT", "TNDN", "TNCN", "TTĐB", "TTDB", "FCT", "HĐLĐ", "BHXH", "BHYT", "BTC", "TCT", "KTV", "NĐ", "TT", "QĐ", "CV", "VN"];
+function niceTitle(t) {
+  t = String(t || "").replace(/\[\s+/g, "[").replace(/\s+\]/g, "]").trim();
+  var letters = t.replace(/[^A-Za-zÀ-ỹ]/g, ""), up = letters.replace(/[^A-ZÀ-ỸĐ]/g, "");
+  if (letters.length < 8 || up.length / letters.length < 0.8) return t;
+  var low = t.toLowerCase().replace(/(^|[\s(\[])([a-zà-ỹđ])/, function (m, a, b) { return a + b.toUpperCase(); });
+  low = low.replace(/\]\s+([a-zà-ỹđ])/, function (m, b) { return "] " + b.toUpperCase(); });
+  return low.split(" ").map(function (w) { var core = w.replace(/[^A-Za-zÀ-ỹĐđ]/g, "").toUpperCase(); return NEWS_ABBR.indexOf(core) >= 0 ? w.toUpperCase() : w; }).join(" ");
+}
+// tóm tắt: bỏ tiêu đề bảng ("STT Vấn đề ... văn bản 1"), đường link, phần mục lục "Nội dung bài viết"
+function cleanExcerpt(t) {
+  t = String(t || "").replace(/\s*Nội dung bài viết[\s\S]*$/, "").replace(/\[…\]|\[&hellip;\]|…$/g, "");
+  t = t.replace(/^STT\s+Vấn đề[\s\S]*?văn bản\s*1\.?\s*/i, "").replace(/https?:\/\/\S+/g, "").replace(/\s+/g, " ").trim();
+  return t.length > 170 ? t.slice(0, 170).replace(/\s+\S*$/, "") : t;
+}
+function newsDate(d) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(d || "")); return m ? m[3] + "/" + m[2] + "/" + m[1] : ""; }
 function decodeHtml(h) { var t = document.createElement("textarea"); t.innerHTML = String(h || "").replace(/<[^>]+>/g, " "); return t.value.replace(/\s+/g, " ").trim(); }
 function safeLink(u) { return /^https:\/\/gonnapass\.com\//.test(String(u || "")) ? u : BLOG_URL; }
 function loadNews() {
   if (NEWS || NEWS_LOADING) return;
-  var c = lsGet("gnp:news", null);
+  var c = lsGet("gnp:news2", null);
   if (c && c.at && Date.now() - c.at < 6 * 3600 * 1000 && c.data) { NEWS = c.data; return; }
   if (typeof fetch !== "function") { NEWS = []; return; }
   NEWS_LOADING = true;
   var api = "https://gonnapass.com/wp-json/wp/v2/";
   Promise.all(NEWS_CATS.map(function (cat) {
-    return fetch(api + "posts?per_page=4&categories=" + cat.id + "&_fields=id,title,link,date,featured_media,excerpt").then(function (r) { return r.json(); });
+    return fetch(api + "posts?per_page=12&categories=" + cat.id + "&_fields=id,title,link,date,featured_media,excerpt").then(function (r) { return r.json(); });
   })).then(function (lists) {
     var ids = []; lists.forEach(function (l) { (l || []).forEach(function (p) { if (p.featured_media && ids.indexOf(p.featured_media) < 0) ids.push(p.featured_media); }); });
-    var media = ids.length ? fetch(api + "media?per_page=20&include=" + ids.join(",") + "&_fields=id,source_url,media_details").then(function (r) { return r.json(); }).catch(function () { return []; }) : Promise.resolve([]);
+    var media = ids.length ? fetch(api + "media?per_page=50&include=" + ids.join(",") + "&_fields=id,source_url,media_details").then(function (r) { return r.json(); }).catch(function () { return []; }) : Promise.resolve([]);
     return media.then(function (ms) {
       var img = {}; (Array.isArray(ms) ? ms : []).forEach(function (m) { var sz = m.media_details && m.media_details.sizes || {}; img[m.id] = (sz.medium_large || sz.medium || sz.large || {}).source_url || m.source_url; });
       NEWS = lists.map(function (l, k) {
         return { cat: NEWS_CATS[k].id, posts: (Array.isArray(l) ? l : []).map(function (p) {
-          return { title: decodeHtml(p.title && p.title.rendered), link: safeLink(p.link), date: p.date, img: /^https:\/\/gonnapass\.com\//.test(img[p.featured_media] || "") ? img[p.featured_media] : "", ex: decodeHtml(p.excerpt && p.excerpt.rendered).replace(/\s*Nội dung bài viết.*$/, "").slice(0, 170) };
+          return { title: niceTitle(decodeHtml(p.title && p.title.rendered)), link: safeLink(p.link), date: p.date, img: /^https:\/\/gonnapass\.com\//.test(img[p.featured_media] || "") ? img[p.featured_media] : "", ex: cleanExcerpt(decodeHtml(p.excerpt && p.excerpt.rendered)) };
         }) };
       });
-      lsSet("gnp:news", { at: Date.now(), data: NEWS });
+      lsSet("gnp:news2", { at: Date.now(), data: NEWS });
     });
   }).catch(function () { NEWS = []; }).then(function () { NEWS_LOADING = false; if (S.view === "home") { var box = el("newsBox"); if (box) box.outerHTML = newsHtml(); } });
 }
 function newsHtml() {
   if (NEWS && !NEWS.length) return '<div id="newsBox"></div>';
-  var cols = NEWS_CATS.map(function (cat, k) {
-    var d = NEWS ? (NEWS.filter(function (x) { return x.cat === cat.id; })[0] || { posts: [] }) : null;
-    var more = "https://gonnapass.com/category/" + cat.slug + "/";
-    var body;
-    if (!d) body = '<div class="news-skel"></div><div class="news-skel sm"></div><div class="news-skel sm"></div>';
-    else if (!d.posts.length) body = '<p class="small muted">Xem các bài viết mới nhất tại gonnapass.com.</p>';
+  var used = {}, logo = LOGO_SRC ? '<img src="' + esc(LOGO_SRC) + '" alt="">' : "", sel = {};
+  var pick = function (posts, n) { var out = []; (posts || []).forEach(function (p) { if (out.length < n && !used[p.link]) { used[p.link] = 1; out.push(p); } }); return out; };
+  // mỗi bài chỉ xuất hiện ở 1 cột: chuyên mục cụ thể chọn trước, "Tin nổi bật" lấy các bài còn lại
+  if (NEWS) [216, 222, 227].forEach(function (id) { var d = NEWS.filter(function (x) { return x.cat === id; })[0] || { posts: [] }; sel[id] = pick(d.posts, 4); });
+  var cols = NEWS_CATS.map(function (cat) {
+    var more = "https://gonnapass.com/category/" + cat.slug + "/", list = sel[cat.id], body;
+    if (!NEWS) body = '<div class="news-skel"></div><div class="news-skel sm"></div><div class="news-skel sm"></div>';
+    else if (!list || !list.length) body = '<p class="small muted">Xem các bài viết mới nhất tại gonnapass.com.</p>';
     else {
-      var p0 = d.posts[0];
-      body = '<a class="news-main" href="' + esc(p0.link) + '" target="_blank" rel="noopener"><div class="news-img"' + (p0.img ? ' style="background-image:url(\'' + esc(p0.img) + '\')"' : "") + ">" + (p0.img ? "" : '<span>' + esc(cat.name) + "</span>") + '</div><div class="news-t">' + esc(p0.title) + '</div><div class="news-ex">' + esc(p0.ex) + (p0.ex ? "…" : "") + "</div></a>" +
-        '<ul class="news-list">' + d.posts.slice(1, 4).map(function (p) { return '<li><a href="' + esc(p.link) + '" target="_blank" rel="noopener">' + esc(p.title) + "</a></li>"; }).join("") + "</ul>";
+      var main = list[0], rest = list.slice(1);
+      body = '<a class="news-main" href="' + esc(main.link) + '" target="_blank" rel="noopener"><div class="news-img"' + (main.img ? ' style="background-image:url(\'' + esc(main.img) + '\')"' : "") + ">" +
+          (main.img ? "" : '<div class="news-ph">' + logo + "<span>" + esc(cat.name) + "</span></div>") + "</div>" +
+          '<div class="news-meta">' + esc(newsDate(main.date)) + '</div><div class="news-t">' + esc(main.title) + '</div><div class="news-ex">' + esc(main.ex) + (main.ex ? "…" : "") + '</div><span class="news-more">Đọc tiếp ›</span></a>' +
+          (rest.length ? '<ul class="news-list">' + rest.map(function (p) { return '<li><a href="' + esc(p.link) + '" target="_blank" rel="noopener"><span class="nl-t">' + esc(p.title) + '</span><span class="nl-d">' + esc(newsDate(p.date)) + "</span></a></li>"; }).join("") + "</ul>" : "");
     }
     return '<div class="news-col" style="--nc:' + cat.color + '"><div class="news-head"><b>' + esc(cat.name) + '</b><a href="' + more + '" target="_blank" rel="noopener">Xem tất cả ›</a></div><div class="news-body">' + body + "</div></div>";
   }).join("");
-  return '<section id="newsBox" class="news"><div class="sec-title"><h3>Tin tức từ Gonnapass</h3></div><div class="news-grid">' + cols + "</div></section>";
+  return '<section id="newsBox" class="news"><div class="news-title"><h3>Tin tức từ Gonnapass</h3><a href="' + BLOG_URL + '" target="_blank" rel="noopener">Xem thêm tại gonnapass.com ›</a></div><div class="news-grid">' + cols + "</div></section>";
 }
 // ---------------------------------------------------------------- trang chủ
 var MENU = [
   { g: "thi", tone: "blue", act: "goExamList", ic: "exam", t: "Làm đề thi CPA theo từng năm", d: "Trải nghiệm trọn vẹn một đề thi CPA từng năm với thời gian 120 phút" },
   { g: "thi", tone: "violet", act: "startRandomMix", ic: "shuffle", t: "Luyện tập ngẫu nhiên tổng hợp", d: "Đề thi được tạo ngẫu nhiên theo format đề thi CPA từ ngân hàng câu hỏi được biên soạn, tổng hợp từ giảng viên Gonnapass." },
   { g: "thi", tone: "orange", act: "startQuick", ic: "bolt", t: "Test nhanh", d: "Bạn muốn luyện tập khi không có nhiều thời gian? Test nhanh 20 câu trong 15 phút sẽ giúp bạn." },
-  { g: "luyen", tone: "orange", act: "goGuide", ic: "book", t: "Tổng hợp dạng bài và kinh nghiệm học", d: "Cấu trúc đề thi, các dạng bài qua từng năm và kinh nghiệm tự ôn thi, làm bài thi CPA môn Tiếng Anh." },
+  { g: "luyen", tone: "orange", act: "goGuide", ic: "book", t: "Cấu trúc đề thi và dạng bài các năm", d: "Cấu trúc, thang điểm đề thi CPA môn Tiếng Anh và vị trí từng dạng bài qua các năm 2010 - 2025." },
+  { g: "luyen", tone: "green", act: "goTips", ic: "target", t: "Bí kíp ôn thi CPA", d: "Kinh nghiệm ôn thi môn Tiếng Anh và kinh nghiệm làm bài thi CPA các môn từ những người đã thi đỗ." },
   { g: "luyen", tone: "teal", act: "goSections", ic: "layers", t: "Luyện theo dạng bài", d: "Chọn 1 hoặc nhiều dạng câu hỏi mà bạn đang còn yếu để luyện tập thêm." },
   { g: "luyen", tone: "blue", act: "startSingleMix", ic: "dice", t: "Ôn luyện ngẫu nhiên câu lẻ", d: "Mỗi lượt khoảng 20 câu trộn ngẫu nhiên đủ các dạng bài của đề thi CPA, có đáp án và giải thích ngay sau từng câu. Hệ thống ưu tiên câu bạn chưa làm để bạn lần lượt ôn hết toàn bộ ngân hàng câu hỏi." },
   { g: "luyen", tone: "rose", act: "goReview", ic: "redo", t: REVIEW_TITLE, d: "Ôn tập lại các câu từng trả lời sai và các câu bạn đã đánh dấu còn phân vân." },
@@ -1775,7 +1902,7 @@ var MENU = [
   { g: "hoc", tone: "violet", act: "goStats", ic: "chart", t: "Đánh giá sự tiến bộ", d: "Tổng hợp kết quả test theo từng dạng bài để bạn có kế hoạch học tập phù hợp." }
 ];
 var MENU_GROUPS = [["thi", "Làm đề thi"], ["luyen", "Luyện tập"], ["hoc", "Học từ vựng & theo dõi tiến bộ"]];
-var TRIAL_OPEN = { startSingleMix: 1, startQuick: 1, goGuide: 1, goExamList: 1 };
+var TRIAL_OPEN = { startSingleMix: 1, startQuick: 1, goGuide: 1, goTips: 1, goExamList: 1 };
 function menuTile(m) {
   var locked = isTrial() && !TRIAL_OPEN[m.act];
   return '<button class="menu-btn tone-' + m.tone + (locked ? " locked" : "") + '" data-act="' + m.act + '">' + (locked ? '<span class="lock-tag">' + icon("lock", "sm") + " Học viên</span>" : "") + '<span class="ic">' + icon(m.ic) + '</span><span><span class="t">' + esc(m.t) + '</span><span class="d">' + esc(m.d) + '</span></span><span class="go">' + icon("next", "sm") + "</span></button>";
@@ -2800,8 +2927,9 @@ VIEWS.notebook = {
       return '<div class="note-card"><div class="row between"><div><b>' + esc(n.title || "(không tiêu đề)") + '</b> <span class="pill">' + esc(kindLabel(n.kind)) + '</span></div><div class="row"><button class="iconbtn" data-act="editNote" data-id="' + n.id + '">' + icon("edit", "sm") + ' Sửa</button><button class="iconbtn" data-act="delNote" data-id="' + n.id + '">' + icon("trash", "sm") + "</button></div></div>" +
         '<div class="body">' + esc(n.text) + '</div><div class="meta" style="margin-top:6px;">Cập nhật: ' + fmtDate(n.updated) + "</div>" + link + "</div>";
     }).join("");
-    return '<div class="card"><div class="row between"><button class="backlink" data-act="goHome">' + icon("back", "sm") + ' Về trang chủ</button><span class="row" style="gap:6px;"><button class="btn secondary" data-act="downloadNotes" data-tip="Tải toàn bộ vở ghi về máy (file Word) để in hoặc xem lại sau"' + (liveNotes().length ? "" : " disabled") + ">" + icon("note", "sm") + ' Tải vở ghi của tôi</button><button class="btn" data-act="newNote">' + icon("plus", "sm") + " Thêm ghi chú</button></span></div>" +
-      '<h2 style="margin:10px 0 4px;">Vở ghi của tôi</h2><p class="muted small">Ghi lại công thức, mẫu câu, điểm ngữ pháp cần chú ý và từ mới. Mẹo: trong ghi chú loại <b>Từ vựng</b>, mỗi dòng viết dạng <span class="kbd">từ = nghĩa</span> sẽ tự thành thẻ flashcard để luyện.</p>' +
+    return '<div class="card"><button class="backlink" data-act="goHome">' + icon("back", "sm") + ' Về trang chủ</button>' +
+      '<div class="row between" style="margin-top:10px;align-items:center;"><h2 style="margin:0;">Vở ghi của tôi</h2><span class="row" style="gap:6px;flex-wrap:wrap;"><button class="btn secondary" data-act="downloadNotes" data-tip="Tải toàn bộ vở ghi về máy (file Word) để in hoặc xem lại sau"' + (liveNotes().length ? "" : " disabled") + ">" + icon("note", "sm") + ' Tải vở ghi của tôi</button><button class="btn" data-act="newNote">' + icon("plus", "sm") + " Thêm ghi chú</button></span></div>" +
+      '<p class="muted small" style="margin-top:6px;">Ghi lại công thức, mẫu câu, điểm ngữ pháp cần chú ý và từ mới. Mẹo: trong ghi chú loại <b>Từ vựng</b>, mỗi dòng viết dạng <span class="kbd">từ = nghĩa</span> sẽ tự thành thẻ flashcard để luyện.</p>' +
       '<div class="row" style="margin:10px 0;">' + [["all", "Tất cả"], ["grammar", NOTE_KINDS.grammar], ["vocab", NOTE_KINDS.vocab], ["other", NOTE_KINDS.other]].concat(customKinds().map(function (k) { return [k, k]; })).map(function (x) { return '<button class="chip' + (f === x[0] ? " on" : "") + '" data-act="noteFilter" data-f="' + x[0] + '">' + x[1] + "</button>"; }).join("") +
       '<input type="search" id="noteSearch" placeholder="Tìm trong vở ghi…" value="' + esc(S.noteQuery || "") + '" style="max-width:240px;"></div>' +
       '<div class="notice info row between"><span>Tạo bài luyện từ vở ghi: <b>' + withQ + "</b> câu hỏi đã lưu, <b>" + cards + '</b> thẻ từ vựng.</span><span class="row"><button class="btn sm" data-act="testNotesQ"' + (withQ ? "" : " disabled") + '>Luyện các câu đã thêm vào vở ghi</button><button class="btn sm secondary" data-act="testNotesVocab"' + (cards ? "" : " disabled") + ">Luyện từ vựng đã ghi</button></span></div>" +
@@ -2903,35 +3031,87 @@ ACT.testNotesVocab = function () {
 };
 
 // =====================================================================================
-// Tổng hợp dạng bài và kinh nghiệm học (nội dung theo file Word "Kinh nghiệm ôn thi CPA TA
-// và tổng hợp dạng đề các năm" do Gonnapass cung cấp). Sửa nội dung: sửa các biến GD_* dưới đây.
+// Tổng hợp dạng bài và kinh nghiệm học
+//  - Cấu trúc đề thi: theo thang điểm 100 của website (đạt từ 50)
+//  - Dạng bài các năm: tự tổng hợp từ ngân hàng đề (EXAMS), đề mới thêm vào sẽ tự hiện
+//  - Kinh nghiệm ôn thi: nội dung theo tài liệu "Kinh nghiệm ôn thi CPA TA và tổng hợp dạng đề các năm"
 // =====================================================================================
-var GD_YEARS = [["2025", 1], ["2024", 1], ["2023", 1], ["2022", 1], ["2020", 1], ["2019", 1], ["2018", 1], ["2017", 1], ["2016", 1], ["2015", 1], ["2014", 1], ["2013", 1], ["2012", 1], ["2011", 2]];
-// mỗi dòng: tiêu đề tiếng Việt, tiêu đề tiếng Anh, dạng bài để luyện (CATS key), các ô theo năm [nội dung, số cột gộp] - "" hoặc "/" = không có
-var GD_ROWS = [
-  { part: "PHẦN I - ĐỌC / READING" },
-  { t: "Dạng 1. Chọn từ/cụm từ hoàn thành câu", en: "Choose the correct word or phrase to complete sentences", cats: ["vocab"], c: [["Section 1", 1], ["Section 1", 1], ["Section 1", 13]] },
-  { t: "Dạng 2. Đọc đoạn văn và trả lời câu hỏi", en: "Read the passages and answer the questions", cats: ["reading-open"], c: [["Section 2", 1], ["Section 2", 1], ["Section 2", 9], ["/", 3], ["Section 2", 1]] },
-  { t: "Dạng 3. Đọc đoạn văn và chọn câu trả lời đúng", en: "Multiple choice", cats: ["reading-mcq"], c: [["Section 2", 1], ["Section 2", 1], ["Section 2", 12], ["/", 1]] },
-  { t: "Dạng 4. Điền từ phù hợp vào chỗ trống", en: "Fill in space in paragraph", cats: ["cloze"], c: [["Section 3", 1], ["Section 3", 1], ["Section 3", 9], ["Section 4", 3], ["Section 3", 1]] },
-  { t: "Dạng 5. Chọn Đúng/Sai/Không rõ", en: "Choose Right, Wrong or Doesn't say", cats: ["reading-mcq"], c: [["", 1], ["", 1], ["", 1], ["/", 8], ["Section 3", 3], ["/", 1]] },
-  { part: "PHẦN II - VIẾT / WRITING" },
-  { t: "Dạng 6. Sử dụng dạng đúng của từ", en: "Form words to fill in sentences", cats: ["wordform"], c: [["Section 1", 1], ["Section 1", 1], ["Section 1", 9], ["/", 4]] },
-  { t: "Dạng 7. Hoàn thành câu từ các từ cho sẵn (bổ sung thêm nếu cần)", en: "Complete sentences from words, phrases", cats: ["sentence-build"], c: [["Section 2", 1], ["Section 2", 1], ["Section 2", 9], ["Section 1", 4]] },
-  { t: "Dạng 8. Hoàn thành câu có nghĩa giống câu cho sẵn", en: "Finish sentences with the same meaning", cats: ["transform"], c: [["Section 3", 1], ["Section 3", 1], ["Section 3", 9], ["Section 2", 4]] },
-  { t: "Dạng 9. Dịch Việt - Anh và Anh - Việt", en: "Translation", cats: ["translate-en-vi", "translate-vi-en"], c: [["Section 4", 1], ["Section 4", 1], ["Section 4", 9], ["Section 3", 4]] }
+// 9 dạng bài: họ (family) tương ứng các loại section trong ngân hàng đề
+var GD_TYPES = [
+  { k: "vocab", part: "R", t: "Chọn từ/cụm từ hoàn thành câu", en: "Choose the correct word or phrase", cats: ["vocab"] },
+  { k: "reading-open", part: "R", t: "Đọc đoạn văn và trả lời câu hỏi", en: "Read the passages and answer the questions", cats: ["reading-open"] },
+  { k: "reading-mcq", part: "R", t: "Đọc đoạn văn và chọn câu trả lời đúng", en: "Multiple choice", cats: ["reading-mcq"] },
+  { k: "tf", part: "R", t: "Chọn Đúng/Sai/Không rõ, Đồng ý/Không đồng ý", en: "Right, Wrong or Doesn't say / Agree or Disagree", cats: ["reading-mcq"] },
+  { k: "cloze", part: "R", t: "Điền từ phù hợp vào đoạn văn", en: "Fill in the passage", cats: ["cloze"] },
+  { k: "wordform", part: "W", t: "Dùng dạng đúng của từ (từ loại)", en: "Word formation", cats: ["wordform"] },
+  { k: "sentence-build", part: "W", t: "Viết câu từ các từ gợi ý", en: "Sentence building", cats: ["sentence-build"] },
+  { k: "transform", part: "W", t: "Viết lại câu giữ nguyên nghĩa", en: "Sentence transformation", cats: ["transform"] },
+  { k: "translate", part: "W", t: "Dịch Anh - Việt, Việt - Anh", en: "Translation", cats: ["translate-en-vi", "translate-vi-en"] }
 ];
-// cấu trúc đề thi tham khảo (80 điểm); focus = phần trọng tâm (in đậm trong tài liệu)
-var GD_STRUCT = [
-  { part: "Phần I (Part I): Đọc hiểu (Reading)", pts: "40" },
-  { t: "Bài 1: Cho 20 - 25 từ hoặc cụm từ và cho sẵn 15 câu chưa hoàn chỉnh, thí sinh chọn 1 từ hoặc cụm từ thích hợp cho ở trên điền vào chỗ trống để hoàn thành câu. Hoặc dạng bài Multiple choice.", note: "Trước năm 2020, mỗi câu đúng được 02 điểm", pts: "15 x 1 = 15", focus: 1, cats: ["vocab"] },
-  { t: "Bài 2: 2 bài đọc, mỗi bài khoảng 80 - 100 từ, sau mỗi bài đó cho 5 câu hỏi. Thí sinh đọc và trả lời hoặc chọn câu trả lời đúng.", pts: "10 x 1.5 = 15", cats: ["reading-open", "reading-mcq"] },
-  { t: "Bài 3: Cho 1 bài đọc khoảng 150 từ, trong đó có 10 chỗ trống. Thí sinh tự tìm từ hoặc cụm từ thích hợp điền vào chỗ trống để thành bài đọc.", pts: "10 x 1 = 10", focus: 1, cats: ["cloze"] },
-  { part: "Phần II (Part II): Viết (Writing)", pts: "40" },
-  { t: "Bài 1: Dùng dạng thích hợp của từ cho sẵn trong ngoặc điền vào chỗ trống để hoàn thành câu. Có câu mẫu. Tổng số 5 câu.", pts: "5 x 1 = 5", focus: 1, cats: ["wordform"] },
-  { t: "Bài 2: Dựng câu có hướng dẫn (guided sentence) theo các từ cho sẵn. Có câu mẫu. Tổng số 10 câu.", pts: "10 x 1.5 = 15", focus: 1, cats: ["sentence-build"] },
-  { t: "Bài 3: Viết lại câu nhưng phải giữ nguyên ý chính của câu cho sẵn. Có câu mẫu, tổng số 5 câu.", note: "Trước năm 2020, mỗi câu đúng được 02 điểm", pts: "5 x 1 = 5", cats: ["transform"] },
-  { t: "Bài 4: Dịch 5 câu tiếng Việt ra tiếng Anh, 5 câu tiếng Anh ra tiếng Việt.", pts: "10 x 1.5 = 15", focus: 1, cats: ["translate-en-vi", "translate-vi-en"] }
+function gdFamily(slug) {
+  slug = String(slug || "");
+  if (/^vocab/.test(slug)) return "vocab";
+  if (slug === "reading-open") return "reading-open";
+  if (/^reading-mcq/.test(slug)) return "reading-mcq";
+  if (slug === "reading-tf" || slug === "reading-agree-disagree") return "tf";
+  if (/^cloze/.test(slug)) return "cloze";
+  if (/^translate/.test(slug)) return "translate";
+  return slug;
+}
+var GD_PART = { vocab: "R", "reading-open": "R", "reading-mcq": "R", tf: "R", cloze: "R", wordform: "W", "sentence-build": "W", transform: "W", translate: "W" };
+// vị trí Section của từng dạng trong 1 đề: các phần đọc hiểu liền nhau (trả lời câu hỏi + trắc nghiệm) và 2 chiều dịch dùng chung 1 Section
+function gdExamLayout(ex) {
+  var pos = { R: 0, W: 0 }, last = { R: null, W: null }, out = {};
+  (ex.blocks || []).forEach(function (b) {
+    if (b.kind !== "section") return;
+    var f = gdFamily(b.slug), p = GD_PART[f]; if (!p) return;
+    var grp = f === "reading-open" || f === "reading-mcq" ? "reading" : f;
+    if (last[p] !== grp) { pos[p]++; last[p] = grp; }
+    if (!out[f]) out[f] = pos[p];
+  });
+  return out;
+}
+function gdYears() {
+  var by = {};
+  EXAMS.filter(function (e) { return e.kind === "cpa"; }).forEach(function (e) { var y = String(e.year); (by[y] = by[y] || []).push({ v: e.version, lay: gdExamLayout(e) }); });
+  return Object.keys(by).sort().reverse().map(function (y) { return { y: y, ex: by[y] }; });
+}
+// nhóm các năm có cùng cấu trúc -> giai đoạn
+function gdSig(lay) { return GD_TYPES.map(function (t) { return lay[t.k] ? t.k + lay[t.k] : ""; }).join("|"); }
+function gdPeriods() {
+  var list = [];
+  gdYears().forEach(function (yr) {
+    yr.ex.forEach(function (e) {
+      var s = gdSig(e.lay), g = list.filter(function (x) { return x.sig === s; })[0];
+      if (!g) { g = { sig: s, lay: e.lay, exams: [] }; list.push(g); }
+      g.exams.push(yr.y + (e.v === "chan" ? " Chẵn" : e.v === "le" ? " Lẻ" : ""));
+    });
+  });
+  return list.sort(function (a, b) { return b.exams.length - a.exams.length; });
+}
+
+// "2025 Chẵn, 2025 Lẻ, 2024 Chẵn…" -> "2014 - 2025, 2013 Chẵn" (năm liên tiếp trong ngân hàng gộp thành khoảng; 2021 không thi nên 2020 - 2022 vẫn liền)
+function gdYearRange(exams, allYears) {
+  var by = {}; exams.forEach(function (x) { var m = /^(\d{4})\s*(.*)$/.exec(x); (by[m[1]] = by[m[1]] || []).push(m[2]); });
+  var full = allYears.filter(function (y) { return by[y.y] && by[y.y].length >= y.ex.length; }).map(function (y) { return y.y; });
+  var out = [], run = [];
+  allYears.forEach(function (y) { if (full.indexOf(y.y) >= 0) run.push(y.y); else { if (run.length) out.push(run); run = []; } });
+  if (run.length) out.push(run);
+  var txt = out.map(function (r) { return r.length > 1 ? r[r.length - 1] + " - " + r[0] : r[0]; });
+  Object.keys(by).sort().reverse().forEach(function (y) { if (full.indexOf(y) < 0) txt.push(y + " (" + by[y].filter(Boolean).join(", ") + ")"); });
+  return txt.join(", ");
+}
+// thang điểm (100 điểm, từ 50 điểm là đạt) - trùng với cách chấm nguyên đề trên website
+var GD_SCALE = [
+  { part: "Phần I - Đọc hiểu (Reading)", pts: 55 },
+  { s: "Section 1", t: "Từ vựng - chọn từ/cụm từ hoàn thành câu (15 câu)", pts: 30, per: "15 câu × 2 điểm", focus: 1, cats: ["vocab"] },
+  { s: "Section 2", t: "Đọc hiểu: 2 bài đọc 80 - 100 từ, trả lời câu hỏi và chọn đáp án đúng (10 câu)", pts: 15, per: "10 câu × 1,5 điểm", cats: ["reading-open", "reading-mcq"] },
+  { s: "Section 3", t: "Điền 1 từ vào đoạn văn khoảng 150 từ (10 chỗ trống)", pts: 10, per: "10 câu × 1 điểm", focus: 1, cats: ["cloze"] },
+  { part: "Phần II - Viết (Writing)", pts: 45 },
+  { s: "Section 1", t: "Từ loại - dùng dạng đúng của từ trong ngoặc (5 câu)", pts: 5, per: "5 câu × 1 điểm", focus: 1, cats: ["wordform"] },
+  { s: "Section 2", t: "Viết câu hoàn chỉnh từ các từ gợi ý (10 câu)", pts: 15, per: "10 câu × 1,5 điểm", focus: 1, cats: ["sentence-build"] },
+  { s: "Section 3", t: "Viết lại câu giữ nguyên nghĩa theo từ gợi ý (5 câu)", pts: 10, per: "5 câu × 2 điểm", cats: ["transform"] },
+  { s: "Section 4", t: "Dịch 5 câu Anh - Việt và 5 câu Việt - Anh", pts: 15, per: "10 câu × 1,5 điểm", focus: 1, cats: ["translate-en-vi", "translate-vi-en"] }
 ];
 
 ACT.goGuide = function () { logEvent("mo_chuc_nang", "kinh_nghiem"); S.guideTab = S.guideTab || "cautruc"; go("guide"); };
@@ -2944,58 +3124,68 @@ ACT.guidePractice = function (t) {
 function gdPracticeBtn(cats) {
   return '<button class="btn sm ghost gd-go" data-act="guidePractice" data-c="' + cats.join(",") + '">' + (isTrial() ? icon("lock", "sm") + " " : "") + "Luyện dạng này</button>";
 }
+// khung giới thiệu sách (hiện ở cả 3 thẻ)
+function gdBook(variant) {
+  var txt = variant === "cpa" ? "Gonnapass đồng hành cùng bạn qua các môn thi CPA với bộ sách tự ôn thi: đề thi các năm kèm lời giải chi tiết. Đặt sách môn Tiếng Anh còn được kích hoạt toàn bộ tính năng website luyện thi này."
+    : variant === "tips" ? "Muốn ôn đúng trọng tâm, tiết kiệm thời gian? Sách tự ôn thi CPA của Gonnapass tổng hợp đề thi các năm kèm lời giải chi tiết, học viên mua sách được kích hoạt toàn bộ tính năng website luyện thi này."
+    : variant === "years" ? "Muốn luyện đủ tất cả các dạng bài qua từng năm? Đặt sách CPA của Gonnapass để mở khoá toàn bộ đề thi 2010 - 2025 trên website, kèm đáp án và giải thích từng câu."
+    : "Chinh phục mốc 50 điểm cùng sách tự ôn thi CPA của Gonnapass: đề thi các năm, lời giải chi tiết và tài khoản luyện đề đầy đủ tính năng trên website.";
+  return '<div class="gd-book"><div class="gd-book-ic">' + icon("book") + '</div><div class="gd-book-t"><b>Sách ôn thi CPA của Gonnapass</b><span>' + txt + "</span></div>" + orderBtn("sm") + "</div>";
+}
 function gdStructure() {
-  var rows = GD_STRUCT.map(function (r) {
-    if (r.part) return '<tr class="gd-part"><td>' + r.part + '</td><td class="num">' + r.pts + "</td></tr>";
-    return "<tr" + (r.focus ? ' class="gd-focus"' : "") + "><td>" + (r.focus ? '<span class="pill accent gd-pill">Trọng tâm</span>' : "") + esc(r.t) +
-      (r.note ? '<div class="small muted" style="margin-top:3px;"><i>(' + esc(r.note) + ")</i></div>" : "") +
-      '<div style="margin-top:6px;">' + gdPracticeBtn(r.cats) + '</div></td><td class="num">' + r.pts + "</td></tr>";
+  var rows = GD_SCALE.map(function (r) {
+    if (r.part) return '<tr class="gd-part"><td colspan="2">' + r.part + '</td><td class="num">' + r.pts + " điểm</td></tr>";
+    return "<tr" + (r.focus ? ' class="gd-focus"' : "") + '><td class="gd-sec">' + r.s + "</td><td>" + (r.focus ? '<span class="pill accent gd-pill">Trọng tâm</span>' : "") + esc(r.t) +
+      '<div class="small muted" style="margin-top:2px;">' + r.per + '</div><div style="margin-top:6px;">' + gdPracticeBtn(r.cats) + '</div></td><td class="num"><b>' + r.pts + "</b></td></tr>";
   }).join("");
   return '<div class="gd-facts"><div class="gd-fact"><div class="l">Hình thức thi</div><div class="v">Tự luận viết</div></div>' +
-    '<div class="gd-fact"><div class="l">Thời gian</div><div class="v">120 phút liên tục</div></div>' +
-    '<div class="gd-fact"><div class="l">Tổng điểm</div><div class="v">80 điểm</div></div></div>' +
-    '<p class="muted" style="margin:12px 0;">Đề thi được đánh máy vi tính trên khổ giấy A4, có phần phách ở đầu trang 1 và có những khoảng trống thích hợp để thí sinh làm bài trực tiếp vào đề thi. Đề thi gồm 2 phần: đọc hiểu và viết, nội dung là <b>kiến thức phổ thông</b> về chính trị, kinh tế, tài chính, kế toán, văn hoá và xã hội.</p>' +
-    '<div class="gd-scroll"><table class="gd-table gd-struct"><thead><tr><th>Nội dung</th><th class="num">Tổng điểm</th></tr></thead><tbody>' + rows + "</tbody></table></div>" +
-    '<p class="small muted" style="margin-top:8px;">Tổng điểm là 80, sau đó được quy đổi sang thang điểm 10. Phần gắn nhãn <b>Trọng tâm</b> thường mất ít thời gian để làm và có nguyên tắc làm bài rõ ràng hơn các phần khác.</p>';
+    '<div class="gd-fact"><div class="l">Thời gian</div><div class="v">120 phút</div></div>' +
+    '<div class="gd-fact"><div class="l">Thang điểm</div><div class="v">100 điểm · đạt từ 50</div></div></div>' +
+    '<div class="gd-split"><div><div class="gd-split-l">Reading</div><div class="gd-bar"><i style="width:55%"></i></div><b>55 điểm</b></div><div><div class="gd-split-l">Writing</div><div class="gd-bar w"><i style="width:45%"></i></div><b>45 điểm</b></div></div>' +
+    '<div class="gd-scroll"><table class="gd-table gd-struct"><thead><tr><th style="width:92px;">Section</th><th>Nội dung</th><th class="num">Điểm</th></tr></thead><tbody>' + rows +
+    '<tr class="gd-total"><td colspan="2">Tổng cộng</td><td class="num">100 điểm</td></tr></tbody></table></div>' +
+    '<p class="small muted" style="margin-top:8px;">Đề thi gồm kiến thức phổ thông về chính trị, kinh tế, tài chính, kế toán, văn hoá và xã hội, làm trực tiếp vào đề. 5 phần gắn nhãn <b>Trọng tâm</b> chiếm <b>75/100 điểm</b>, thường mất ít thời gian và có nguyên tắc làm bài rõ ràng.</p>' + gdBook("struct");
 }
-function gdYears() {
-  var head = '<tr><th class="gd-sticky">Dạng bài tập</th>' + GD_YEARS.map(function (y) { return '<th class="c"' + (y[1] > 1 ? ' colspan="' + y[1] + '"' : "") + ">" + y[0] + "</th>"; }).join("") + "</tr>" +
-    '<tr class="gd-sub"><td class="gd-sticky"></td><td colspan="3"></td><td class="c" colspan="12">Chẵn/Lẻ</td></tr>';
-  var sub = []; GD_YEARS.forEach(function (y) { for (var k = 0; k < y[1]; k++) sub.push(y[0]); });
-  var body = GD_ROWS.map(function (r) {
-    var pos = 0;
-    if (r.part) return '<tr class="gd-part"><td class="gd-sticky">' + r.part + '</td><td colspan="15"></td></tr>';
-    return '<tr><td class="gd-sticky"><b>' + esc(r.t) + '</b><div class="small muted"><i>' + esc(r.en) + "</i></div>" + '<div style="margin-top:6px;">' + gdPracticeBtn(r.cats) + "</div></td>" +
-      r.c.map(function (x) {
-        var none = !x[0] || x[0] === "/", y1 = sub[pos], y2 = sub[pos + x[1] - 1]; pos += x[1];
-        var range = x[1] > 1 && y1 !== y2 ? '<div class="gd-range">' + y1 + " - " + y2 + "</div>" : "";
-        return '<td class="c' + (none ? " gd-none" : " gd-has") + '"' + (x[1] > 1 ? ' colspan="' + x[1] + '"' : "") + (none ? ' title="Không có dạng bài này"' : "") + ">" + (none ? "-" : esc(x[0])) + range + "</td>";
-      }).join("") + "</tr>";
+function gdCell(v) { return v ? '<span class="gd-s">S' + v + "</span>" : '<span class="gd-no">–</span>'; }
+function gdYearsTab() {
+  var years = gdYears(), total = years.reduce(function (a, y) { return a + y.ex.length; }, 0);
+  var periods = gdPeriods(), allYears = years;
+  var partName = { R: "Reading", W: "Writing" };
+  var cards = periods.map(function (g, k) {
+    var parts = ["R", "W"].map(function (p) {
+      var items = GD_TYPES.filter(function (t) { return t.part === p && g.lay[t.k]; }).sort(function (a, b) { return g.lay[a.k] - g.lay[b.k]; });
+      return '<div class="gd-pcol"><div class="gd-pname">' + partName[p] + "</div>" + items.map(function (t) { return '<div class="gd-pitem"><span class="gd-s">Section ' + g.lay[t.k] + "</span>" + esc(t.t) + "</div>"; }).join("") + "</div>";
+    }).join("");
+    return '<div class="gd-period' + (k === 0 ? " main" : "") + '"><div class="gd-period-h"><b>' + (k === 0 ? "Cấu trúc phổ biến nhất" : "Cấu trúc khác") + '</b><span class="small muted">' + g.exams.length + " đề · " + esc(gdYearRange(g.exams, allYears)) + "</span></div>" + '<div class="gd-pgrid">' + parts + "</div></div>";
   }).join("");
-  return '<p class="muted" style="margin:0 0 10px;">Vị trí (Section) của từng dạng bài trong đề thi các năm 2011 - 2025. Ô gộp nhiều năm nghĩa là các năm đó có cùng vị trí; dấu "-" là năm đó không có dạng bài này.</p>' +
-    '<div class="gd-scroll"><table class="gd-table gd-years"><thead>' + head + "</thead><tbody>" + body + "</tbody></table></div>" +
-    '<p class="small muted" style="margin-top:6px;">Trên điện thoại, vuốt ngang bảng để xem đủ các năm.</p>';
-}
-function gdTips() {
-  return '<p>Mặc dù không phải môn chuyên ngành, ngoại ngữ nói chung, tiếng Anh nói riêng là công cụ cần thiết với tất cả các ứng viên hành nghề trong bối cảnh hội nhập quốc tế. So với các môn học, tiếng Anh là môn điều kiện duy nhất của kỳ thi chỉ cần <b>từ 5 trở lên</b> là đạt yêu cầu và không tính điểm để xét cộng vào tổng điểm như các môn học khác. Đồng thời, đây là môn thi duy nhất không thể học theo kiểu ôn tập toàn bộ giáo trình mà học tiếng Anh là một quá trình tích lũy lâu dài.</p>' +
-    '<div class="gd-box"><h3>Kinh nghiệm ôn thi môn tiếng Anh</h3><ul class="gd-list">' +
-    "<li>Dựa theo cấu trúc các dạng bài, tham khảo đề thi các năm trước và đặt mục tiêu tối cao của bài thi đạt <b>ít nhất 5 điểm</b>.</li>" +
-    "<li>Với những bạn thường xuyên sử dụng tiếng Anh trong công việc, cuộc sống (TOEIC khoảng 700 điểm trở lên) thì chỉ cần ôn lại đề thi của khoảng 5 năm gần nhất để nắm được dạng đề và một số cấu trúc câu được hỏi là khả năng cao sẽ đi thi được ngay.</li>" +
-    "<li>Với những bạn không thành thạo tiếng Anh, không có cách nào khác là phải xác định học tiếng Anh từ lâu dài, trước khi đặt mục tiêu thi kiểm toán viên và có thể tham khảo các tips khi làm bài thi trình độ C. Môn tiếng Anh của CPA chỉ thi viết cho 2 kỹ năng Đọc - Viết mà KHÔNG có kỹ năng nghe, nói nên nội dung quan trọng nhất là:" +
-    '<ul class="gd-sub-list"><li><b>Ngữ pháp:</b> Các thì, các động từ, động từ thiếu khuyết, câu điều kiện, cụm từ...</li>' +
-    "<li><b>Từ vựng:</b> Cần phải nắm được lượng vốn từ tiếng Anh nhất định. Thực chất, các nội dung tổng quát của chương trình thi đã được đề cập trong giáo trình nhưng do topic rất rộng, gần như các nội dung trong cuộc sống đều có thể gặp trong kỳ thi nên tốt nhất, để ôn từ thì các bạn xem đề thi các năm gần đây để nắm được nhiều từ hơn.</li></ul></li>" +
-    '<li>Tìm hiểu cấu trúc đề thi và xem đặt trọng tâm vào nội dung nào. Các phần trọng tâm thường mất ít thời gian để làm và có nguyên tắc làm hơn các nội dung khác (xem thẻ <a href="#" data-act="guideTab" data-t="cautruc">Cấu trúc đề thi</a>, phần gắn nhãn "Trọng tâm").</li></ul></div>' +
-    '<div class="gd-box"><h3>Kinh nghiệm khi làm bài thi</h3><ol class="gd-list gd-steps">' +
-    "<li>Đọc lướt qua đề thi 01 lần.</li><li>Chia thời gian xác định phân bổ cho các phần.</li>" +
-    "<li>Lựa chọn câu dễ làm trước, câu khó làm sau và cố gắng viết nhất có thể để không bỏ qua những câu dịch thuật hoặc sắp xếp lại từ thành câu.</li></ol></div>";
+  var head = '<tr><th class="gd-sticky">Dạng bài</th>' + years.map(function (y) { return '<th class="c">' + y.y + "</th>"; }).join("") + "</tr>";
+  var body = ["R", "W"].map(function (p) {
+    return '<tr class="gd-part"><td class="gd-sticky">' + (p === "R" ? "PHẦN I - READING" : "PHẦN II - WRITING") + '</td><td colspan="' + years.length + '"></td></tr>' +
+      GD_TYPES.filter(function (t) { return t.part === p; }).map(function (t, i) {
+        var n = 0;
+        var cells = years.map(function (y) {
+          var vals = y.ex.map(function (e) { return e.lay[t.k] || 0; }), has = vals.filter(Boolean);
+          if (has.length) n++;
+          var same = vals.every(function (v) { return v === vals[0]; });
+          var inner = same ? gdCell(vals[0]) : y.ex.map(function (e) { return '<span class="gd-v">' + (e.v === "chan" ? "C" : "L") + "</span>" + gdCell(e.lay[t.k]); }).join("<br>");
+          return '<td class="c' + (has.length ? " gd-has" : " gd-none") + '">' + inner + "</td>";
+        }).join("");
+        return '<tr><td class="gd-sticky"><b>' + esc(t.t) + '</b><div class="small muted">' + esc(t.en) + " · có ở " + n + "/" + years.length + ' năm</div><div style="margin-top:6px;">' + gdPracticeBtn(t.cats) + "</div></td>" + cells + "</tr>";
+      }).join("");
+  }).join("");
+  return '<p class="muted" style="margin:0 0 12px;">Tổng hợp từ <b>' + total + " đề thi</b> của " + years.length + " năm (" + years[years.length - 1].y + " - " + years[0].y + ", năm 2021 không tổ chức thi). Đề CPA ổn định cấu trúc qua nhiều năm: nắm chắc cấu trúc phổ biến là đã bao quát gần như toàn bộ đề.</p>" +
+    '<div class="gd-periods">' + cards + "</div>" +
+    '<h3 style="margin:18px 0 6px;">Vị trí từng dạng bài theo năm</h3><p class="small muted" style="margin:0 0 10px;"><span class="gd-s">S2</span> = dạng bài nằm ở Section 2 của phần đó; "–" = năm đó không có. Năm có Đề Chẵn (C) và Đề Lẻ (L) khác nhau sẽ ghi riêng. Trên điện thoại, vuốt ngang bảng để xem đủ các năm.</p>' +
+    '<div class="gd-scroll"><table class="gd-table gd-years"><thead>' + head + "</thead><tbody>" + body + "</tbody></table></div>" + gdBook("years");
 }
 VIEWS.guide = {
   render: function () {
     var tab = S.guideTab || "cautruc";
-    var tabs = [["cautruc", "Cấu trúc đề thi"], ["dangbai", "Dạng bài các năm"], ["kinhnghiem", "Kinh nghiệm ôn thi"]];
-    var body = tab === "dangbai" ? gdYears() : tab === "kinhnghiem" ? gdTips() : gdStructure();
+    if (tab !== "dangbai") tab = "cautruc";
+    var tabs = [["cautruc", "Cấu trúc & thang điểm"], ["dangbai", "Dạng bài các năm"]];
+    var body = tab === "dangbai" ? gdYearsTab() : gdStructure();
     return '<div class="card"><button class="backlink" data-act="goHome">' + icon("back", "sm") + " Về trang chủ</button>" +
-      '<h2 style="margin:10px 0 4px;">Tổng hợp dạng bài và kinh nghiệm học</h2><p class="muted">Cấu trúc đề thi CPA môn Tiếng Anh, các dạng bài qua từng năm và kinh nghiệm tự ôn thi từ đội ngũ Gonnapass.</p>' +
+      '<h2 style="margin:10px 0 4px;">Cấu trúc đề thi và dạng bài các năm</h2><p class="muted">Cấu trúc, thang điểm đề thi CPA môn Tiếng Anh và vị trí từng dạng bài qua các năm. Xem thêm kinh nghiệm ôn thi tại mục <a href="#" data-act="goTips">Bí kíp ôn thi CPA</a>.</p>' +
       '<div class="chips gd-tabs" role="tablist" style="margin:14px 0 16px;">' + tabs.map(function (x) {
         return '<button class="chip' + (tab === x[0] ? " on" : "") + '" role="tab" aria-selected="' + (tab === x[0]) + '" data-act="guideTab" data-t="' + x[0] + '">' + x[1] + "</button>";
       }).join("") + "</div>" + body + "</div>";
@@ -3154,6 +3344,76 @@ ACT.openNotice = function (t) {
     '<div class="row end" style="margin-top:12px;">' + (it && practiceable(it) ? '<button class="btn secondary" data-act="practiceNoticeQ" data-id="' + esc(it.id) + '">Luyện lại câu này</button>' : "") + '<button class="btn" data-act="closeModal">Đóng</button></div>', { wide: true, noFocus: true });
 };
 ACT.practiceNoticeQ = function (t) { closeModal(); startPractice([ITEMS[t.getAttribute("data-id")]], "Luyện lại câu trong thông báo", "review"); };
+
+// =====================================================================================
+// Bí kíp ôn thi CPA: (1) ôn thi môn Tiếng Anh  (2) kinh nghiệm thi CPA các môn
+// Nội dung (2) tóm tắt từ tài liệu "Kinh nghiem thi CPA.docx" do Gonnapass cung cấp (chia sẻ của người đã thi và giảng viên ôn thi)
+// =====================================================================================
+ACT.goTips = function () { logEvent("mo_chuc_nang", "bi_kip"); S.tipsTab = S.tipsTab || "tienganh"; go("tips"); };
+ACT.tipsTab = function (t) { S.tipsTab = t.getAttribute("data-t"); render(); };
+function tipsEnglish() {
+  var card = function (ic, title, body, cta) { return '<div class="gd-tip"><div class="gd-tip-ic">' + icon(ic) + '</div><div><h4>' + title + "</h4>" + body + (cta || "") + "</div></div>"; };
+  return '<div class="gd-hero"><div class="gd-hero-n">50<span>/100</span></div><div><b>Mục tiêu của bạn: đạt từ 50 điểm.</b><br>Tiếng Anh là môn điều kiện của kỳ thi CPA, chỉ cần đạt là qua và không cộng vào tổng điểm các môn khác. Môn thi chỉ kiểm tra 2 kỹ năng <b>Đọc - Viết</b>, không có Nghe - Nói.</div></div>' +
+    '<h3 style="margin:16px 0 10px;">Bạn thuộc nhóm nào?</h3><div class="gd-tips two">' +
+    card("bolt", "Đã dùng tiếng Anh thường xuyên", "<p>Khoảng TOEIC 700 trở lên: chỉ cần ôn lại đề thi <b>5 năm gần nhất</b> để quen dạng đề và các cấu trúc câu hay gặp là có thể đi thi.</p>", '<button class="btn sm" data-act="goExamList">Làm đề theo năm</button>') +
+    card("layers", "Chưa thành thạo tiếng Anh", "<p>Xác định học lâu dài, bắt đầu sớm trước khi thi kiểm toán viên. Tập trung 2 mảng:</p><ul class=\"gd-ul\"><li><b>Ngữ pháp:</b> các thì, động từ, động từ khuyết thiếu, câu điều kiện, cụm từ.</li><li><b>Từ vựng:</b> chủ đề rất rộng, nên học từ trong đề thi các năm gần đây.</li></ul>",
+      '<span class="row" style="gap:6px;"><button class="btn sm" data-act="startSingleMix">Ôn câu lẻ mỗi ngày</button><button class="btn sm secondary" data-act="goFlash">Học từ mới</button></span>') + "</div>" +
+    '<h3 style="margin:18px 0 10px;">Ưu tiên phần dễ ghi điểm</h3>' +
+    '<div class="gd-prio">' + [["Từ vựng", 30, ["vocab"]], ["Viết câu từ gợi ý", 15, ["sentence-build"]], ["Dịch Anh - Việt, Việt - Anh", 15, ["translate-en-vi", "translate-vi-en"]], ["Điền từ vào đoạn văn", 10, ["cloze"]], ["Từ loại", 5, ["wordform"]]].map(function (x) {
+      return '<button class="gd-prio-i" data-act="guidePractice" data-c="' + x[2].join(",") + '"><span class="gd-prio-n">' + x[1] + '<small>điểm</small></span><span class="gd-prio-t">' + x[0] + "<small>Luyện ngay ›</small></span></button>";
+    }).join("") + '</div><p class="small muted" style="margin-top:6px;">5 phần này chiếm 75/100 điểm, mất ít thời gian và có nguyên tắc làm bài rõ ràng.</p>' +
+    '<h3 style="margin:18px 0 10px;">Trong phòng thi: 3 bước</h3><div class="gd-steps3">' +
+    '<div><span>1</span><b>Đọc lướt toàn bộ đề</b>một lần trước khi làm.</div><div><span>2</span><b>Chia thời gian</b>cho từng phần trong 120 phút.</div><div><span>3</span><b>Làm câu dễ trước, câu khó sau</b>và cố gắng viết hết, không bỏ trống câu dịch hay câu viết lại.</div></div>' +
+    gdBook("tips");
+}
+
+function tipsCPA() {
+  var li = function (arr) { return '<ul class="gd-ul">' + arr.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ul>"; };
+  var study = [
+    ["user", "Đi học đầy đủ", "Những gì cơ bản và quan trọng nhất thầy cô đều giảng trên lớp. Ghi nhớ các phần được nhấn mạnh là hành trang tốt để vào phòng thi. Có thể ghi âm bài giảng (nếu được phép) để nghe lại lúc rảnh."],
+    ["target", "Ôn đúng phạm vi", "Chỉ ôn trong phạm vi bài học ở lớp ôn và <b>tài liệu ôn thi Bộ Tài chính công bố</b> cho kỳ thi năm đó. Ưu tiên học kỹ các phần trọng tâm."],
+    ["exam", "Giải đề 3 - 5 năm gần nhất", "Về cuối đợt ôn, giải hết đề các năm gần đây trong điều kiện như thi thật. Luyện đến khi mỗi câu hoàn thành trong khoảng 35 phút."],
+    ["layers", "Học lý thuyết bằng sơ đồ tư duy", "Lập sơ đồ từ chủ đề → chương → nội dung → định nghĩa, đặc điểm, liên hệ. Khi gặp câu hỏi, bạn định vị được ngay nó thuộc phần nào."]
+  ];
+  var errs = [
+    ["Không làm hết các câu", "Đề tự luận thường gồm 5 câu, mỗi câu 2 điểm; câu trả lời dài đến đâu cũng chỉ được tối đa điểm của câu đó. Làm đủ 5 câu với tỷ lệ đúng khoảng 70% (≈ 7 điểm) thường lợi hơn làm thật kỹ 4 câu (≈ 5,6 điểm).", "Đọc cả đề, làm câu quen trước nhưng không sa đà; chia thời gian đều (180 phút / 5 câu ≈ 36 phút, câu lý thuyết khoảng 25 phút)."],
+    ["Làm đủ câu nhưng thiếu ý", "Đáp án chấm điểm chi tiết theo từng ý; bỏ ý nào mất điểm ý đó.", "Gạch chân các ý của câu hỏi và trả lời đủ từng ý, không bỏ trống. Ví dụ: \"Thế nào là cá nhân cư trú? Cách tính thuế TNCN với thu nhập từ kinh doanh của cá nhân cư trú và không cư trú khác nhau thế nào?\" cần trả lời đủ 2 ý."],
+    ["Làm tắt, cộng gộp các bước", "Gộp chung chi phí hoặc VAT đầu ra/đầu vào, chỉ cần sai một khoản là cả phép tính sai, khó được nhặt điểm thành phần; còn dễ mất phần giải thích vì sao tính/không tính.", "Tính riêng từng nghiệp vụ, kèm giải thích; vẫn ghi đủ các dòng tổng (tổng VAT đầu ra, VAT đầu vào được khấu trừ, chi phí được trừ) vì phần này cũng được tính điểm."],
+    ["Trả lời lạc đề", "Viết dài mà không đúng ý hỏi thì không có trong đáp án nên không có điểm.", "Định hình ý hỏi trước khi viết. Nếu không chắc, viết theo hiểu biết và kinh nghiệm thực tế, ít nhất nêu được các từ khoá (keywords), không bỏ câu nào."],
+    ["Lúng túng khi đề thiếu thông tin", "Mất nhiều thời gian vì đề không đủ dữ kiện để có một đáp án duy nhất.", "Nêu rõ giả định rồi làm theo giả định đó. Ví dụ hàng hoá tiêu dùng nội bộ không nói rõ mục đích: giả sử dùng cho sản xuất kinh doanh thì xử lý thuế GTGT theo hướng đó."],
+    ["Cho ví dụ minh hoạ dài dòng", "Ví dụ minh hoạ cho một ý nhỏ thường chỉ được khoảng 1/4 - 2/4 điểm.", "Hỏi gì cho ví dụ đúng ý đó, ngắn gọn, trực tiếp."]
+  ];
+  var subj = [
+    ["Kế toán", "Năm nào cũng có câu tình huống: nêu ngắn gọn cơ sở, phương pháp liên quan trước (ví dụ các phương pháp điều chỉnh), rồi mới áp dụng vào nghiệp vụ cụ thể."],
+    ["Tài chính", "Bài tập dài, sai một bước dễ mất điểm các bước sau: làm chắc đến đâu hay đến đó. Nếu thời gian ôn hạn chế, luyện thật kỹ các dạng bài của một số chương hay ra bài tập."],
+    ["Thuế", "Bài tập thường không quá phức tạp nên dễ ghi điểm. Chú ý các thay đổi quy định về thuế GTGT, TNDN, TNCN, TTĐB trong khoảng 2 năm gần kỳ thi, đối chiếu với phạm vi tài liệu ôn thi Bộ Tài chính công bố."],
+    ["Luật", "Câu tình huống nên trình bày như một bài viết ngắn: nêu quy định liên quan, áp dụng vào tình huống, rồi kết luận."],
+    ["Phân tích tài chính", "Nắm chắc công thức và ý nghĩa các nhóm chỉ tiêu (khả năng thanh toán, cơ cấu vốn, hiệu quả hoạt động, khả năng sinh lời). Khi làm bài: ghi công thức trước rồi mới thay số, tính riêng từng chỉ tiêu, ghi rõ đơn vị và luôn kèm nhận xét, giải thích nguyên nhân - phần nhận xét cũng được tính điểm."]
+  ];
+  return '<div class="gd-hero"><div class="gd-hero-n">' + icon("target") + '</div><div><b>Kinh nghiệm thi CPA từ những người đã đi trước.</b><br>Tổng hợp các kinh nghiệm ôn tập và làm bài tự luận được nhiều anh chị đã thi đỗ và giảng viên ôn thi chia sẻ, giúp bạn quét tối đa số điểm với những kiến thức đã có.</div></div>' +
+    '<h3 style="margin:16px 0 10px;">Ôn thi hiệu quả</h3><div class="gd-tips two">' + study.map(function (x) { return '<div class="gd-tip"><div class="gd-tip-ic">' + icon(x[0]) + '</div><div><h4>' + x[1] + "</h4><p>" + x[2] + "</p></div></div>"; }).join("") + "</div>" +
+    '<h3 style="margin:18px 0 4px;">6 lỗi hay mất điểm khi làm bài và cách khắc phục</h3><p class="small muted" style="margin:0 0 10px;">Theo chia sẻ của một giảng viên ôn thi môn Thuế, áp dụng cho các môn thi tự luận.</p><div class="tips-errs">' +
+    errs.map(function (x, i) { return '<div class="tips-err"><div class="tips-err-h"><span>' + (i + 1) + "</span><b>" + x[0] + '</b></div><p class="small muted">' + x[1] + '</p><div class="tips-fix"><b>Cách khắc phục:</b> ' + x[2] + "</div></div>"; }).join("") + "</div>" +
+    '<h3 style="margin:18px 0 10px;">Kỹ năng trình bày bài thi</h3><div class="gd-tip"><div class="gd-tip-ic">' + icon("edit") + "</div><div>" + li([
+      "<b>Viết sai không bị trừ điểm, không viết thì không có điểm:</b> làm hết các câu, câu chưa chắc thì làm theo kinh nghiệm hoặc suy luận.",
+      "<b>Lý thuyết:</b> nêu định nghĩa, đặc điểm của nội dung được hỏi, sau đó triển khai các ý trả lời trực tiếp, viết thành đoạn văn để người chấm dễ nhặt ý; tránh gạch đầu dòng quá cộc.",
+      "<b>Trích dẫn văn bản:</b> nếu không nhớ chính xác điều khoản, số hiệu văn bản thì trình bày nội dung quy định, tránh ghi sai.",
+      "<b>Bài tập:</b> mỗi bài làm trên một tờ giấy thi riêng để dễ bổ sung ý; làm bài chắc nhất trước.",
+      "<b>Dành 5 - 10 phút cuối</b> để soát lại toàn bài."]) + "</div></div>" +
+    '<h3 style="margin:18px 0 10px;">Lưu ý theo từng môn</h3><div class="tips-subj">' + subj.map(function (x) { return '<div><b>' + x[0] + "</b><p>" + x[1] + "</p></div>"; }).join("") + "</div>" +
+    '<p class="small muted" style="margin-top:12px;">Nội dung mang tính tham khảo từ kinh nghiệm cá nhân; cấu trúc đề, phạm vi và cách chấm có thể thay đổi theo từng năm. Vui lòng theo dõi thông báo và tài liệu ôn thi chính thức của Bộ Tài chính.</p>' + gdBook("cpa");
+}
+VIEWS.tips = {
+  render: function () {
+    var tab = S.tipsTab === "cpa" ? "cpa" : "tienganh";
+    var tabs = [["tienganh", "Ôn thi môn Tiếng Anh"], ["cpa", "Kinh nghiệm thi CPA"]];
+    return '<div class="card"><button class="backlink" data-act="goHome">' + icon("back", "sm") + " Về trang chủ</button>" +
+      '<h2 style="margin:10px 0 4px;">Bí kíp ôn thi CPA</h2><p class="muted">Kinh nghiệm ôn thi môn Tiếng Anh và kinh nghiệm làm bài thi CPA các môn, tổng hợp bởi đội ngũ Gonnapass.</p>' +
+      '<div class="chips gd-tabs" role="tablist" style="margin:14px 0 16px;">' + tabs.map(function (x) {
+        return '<button class="chip' + (tab === x[0] ? " on" : "") + '" role="tab" aria-selected="' + (tab === x[0]) + '" data-act="tipsTab" data-t="' + x[0] + '">' + x[1] + "</button>";
+      }).join("") + "</div>" + (tab === "cpa" ? tipsCPA() : tipsEnglish()) + "</div>";
+  }
+};
 
 // =====================================================================================
 // học từ mới: flashcard + bài luyện từ mới
@@ -3370,7 +3630,7 @@ VIEWS.stats = {
     return '<div class="card"><button class="backlink" data-act="goHome">' + icon("back", "sm") + " Về trang chủ</button>" +
       '<h2 style="margin:10px 0 4px;">Đánh giá sự tiến bộ</h2><p class="muted">Tổng hợp kết quả luyện tập theo từng dạng bài để bạn có kế hoạch học tập phù hợp.</p>' + SCORE_NOTE + "</div>" +
       // 1. tổng quan: thời gian học -> kết quả -> độ phủ
-      '<div class="statgrid">' + tile(fmtMin(studySecOn(dayKey())), "Thời gian học hôm nay") + tile(fmtMin(studySecWeek()), "Thời gian học tuần này") +
+      '<div class="statgrid c4">' + tile(fmtMin(studySecOn(dayKey())), "Thời gian học hôm nay") + tile(fmtMin(studySecWeek()), "Thời gian học tuần này") +
       tile(sum.exams, "Số bài thi đã nộp") + tile(sum.exams ? sum.avgScore : "-", "Điểm thi trung bình /100") +
       tile(sum.attempts, "Lượt trả lời câu hỏi") + tile(fmtPct(sum.correct, sum.attempts), "Tỷ lệ đúng chung") +
       tile(sum.covered + "/" + total, "Câu đã làm ít nhất 1 lần") + tile(c2, "Câu đã làm từ 2 lần") + "</div>" +
@@ -3396,7 +3656,7 @@ ACT.practiceWeak = function (t) { S.secSel = {}; S.secSel[t.getAttribute("data-k
 // =====================================================================================
 // chức năng chính trên trang chủ -> sự kiện "mở chức năng" tương ứng (mỗi chức năng đếm 1 lần mở, không cộng trùng)
 var FEATURES_MAIN = [["f:de_theo_nam", "Làm đề thi CPA theo từng năm"], ["f:ngau_nhien", "Luyện tập ngẫu nhiên tổng hợp"], ["f:test_nhanh", "Test nhanh"],
-  ["f:kinh_nghiem", "Tổng hợp dạng bài và kinh nghiệm học"], ["f:theo_dang_bai", "Luyện theo dạng bài"], ["f:cau_le", "Ôn luyện ngẫu nhiên câu lẻ"],
+  ["f:kinh_nghiem", "Cấu trúc đề thi và dạng bài các năm"], ["f:bi_kip", "Bí kíp ôn thi CPA"], ["f:theo_dang_bai", "Luyện theo dạng bài"], ["f:cau_le", "Ôn luyện ngẫu nhiên câu lẻ"],
   ["f:luyen_lai", "Luyện lại câu sai/ cần học lại"], ["f:hoc_tu_moi", "Học từ mới"], ["f:vo_ghi", "Vở ghi của tôi"], ["f:thong_ke", "Đánh giá sự tiến bộ"], ["f:de_muc_do", "Đề luyện tập theo mức độ"]];
 var STATUS_LABEL = { moi: "Chưa xem", da_xem: "Đã xem", da_xu_ly: "Đã xử lý", da_sua: "Đã sửa Database", da_duyet: "Đã duyệt", tu_choi: "Từ chối" };
 function adm(action, payload) {
